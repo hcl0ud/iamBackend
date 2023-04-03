@@ -1,0 +1,29 @@
+{
+  "name": "iamBlogPlatform",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/hcl0ud/iamBlogPlatform.git",
+  "license": "MIT",
+  "scripts": {
+    "start": "nodemon src/index.js"
+  },
+  "dependencies": {
+    "@koa/router": "^12.0.0",
+    "koa": "^2.14.1",
+    "koa-bodyparser": "^4.4.0"
+  },
+  "devDependencies": {
+    "@koa/cors": "^4.0.0",
+    "babel-eslint": "^10.1.0",
+    "dotenv": "^16.0.3",
+    "eslint": "^7.32.0 || ^8.2.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-config-standard": "^17.0.0",
+    "eslint-plugin-import": "^2.25.2",
+    "eslint-plugin-n": "^15.0.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "eslint-plugin-promise": "^6.0.0",
+    "nodemon": "^2.0.22",
+    "prettier": "^2.8.7"
+  }
+}
