@@ -5,11 +5,9 @@ const router = new Router();
 
 // API
 router.post("/", () => {
-  const data = {
+  return {
     Msg: "success!",
   };
-
-  return data;
 });
 
 module.exports = router;
