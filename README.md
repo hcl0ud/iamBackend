@@ -2,18 +2,36 @@
 
 <div align="center">
 	<img src="https://img.shields.io/badge/Node.js-339933?style=flat&logo=Node.js&logoColor=white"  alt=""/>
+	<img src="https://img.shields.io/badge/MongoDB-47A248?style=flat&logo=MongoDB&logoColor=white"  alt=""/>
 	<img src="https://img.shields.io/badge/Koa-33333D?style=flat&logo=Koa&logoColor=white"  alt=""/>
 </div>
 
 ---
-<h2 align="center">
+<h1 align="center">
     👉 Start Guide 👈
-</h2>
+</h1>
 
-### 1. node.js install
-<a src="https://nodejs.org/ko" style="font-size: 18px"> node.js installer</a>
+<p>
 
-### 2. in terminal
+## 1. node.js install
+<a src="https://nodejs.org/ko" style="font-size: 20px"> node.js installer</a>
+
+## 2. in terminal
+
 ```
 npm install
 ```
+
+</p>
+
+---
+<h1 align="center">
+    etc...
+</h1>
+
+<div>
+    <span style="font-size: 20px">
+    - IDE plugin:&nbsp
+    </span>
+	<img src="https://img.shields.io/badge/Prettier-F7B93E?style=flat&logo=Prettier&logoColor=white"  alt=""/>
+</div>
