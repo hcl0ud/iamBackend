@@ -25,13 +25,7 @@ npm install
 </p>
 
 ---
-<h1 align="center">
-    etc...
-</h1>
-
-<div>
-    <span style="font-size: 20px">
-    - IDE plugin:&nbsp
-    </span>
+<div align="center">
+    <h3>+ plugin</h3>
 	<img src="https://img.shields.io/badge/Prettier-F7B93E?style=flat&logo=Prettier&logoColor=white"  alt=""/>
 </div>
