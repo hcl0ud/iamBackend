@@ -3,8 +3,9 @@ module.exports = {
     {
       name: "app",
       script: "nodemon ./src/index.js",
-      instances: 0,
+      instances: 1,
       exec_mode: "cluster",
+      watch: ".",
     },
   ],
 };
