@@ -4,6 +4,8 @@ const jwt = require("../module/jwt");
 
 const user = db.collection("user");
 
+exports.getUserInfo = async (ctx) => {};
+
 exports.register = async (ctx) => {
   const { userEmail, userPassword } = ctx.request.body;
 
@@ -29,6 +31,7 @@ exports.login = async (ctx) => {
       status: 200,
       resultCode: 1,
       data: {
+        userIdx: userEmail,
         token: token.token,
       },
     };
