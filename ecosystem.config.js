@@ -1,9 +1,9 @@
 module.exports = {
   apps: [
     {
-      name: "app",
+      name: "iamServer",
       script: "nodemon src/index.js",
-      instances: 1,
+      instances: 0,
       exec_mode: "fork",
       watch: ".",
     },
