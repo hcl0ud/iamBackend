@@ -9,6 +9,4 @@ const client = new MongoClient(uri, {
 });
 exports.db = client.db("IamDB");
 
-client.connect(() => {
-  console.log("Connected to MongoDB");
-});
+client.connect(() => {}).then((r) => console.log("Connected to MongoDB"));

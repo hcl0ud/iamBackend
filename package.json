@@ -1,5 +1,5 @@
 {
-  "name": "iamBlogPlatform",
+  "name": "iamServer",
   "version": "1.0.0",
   "main": "index.js",
   "repository": "https://github.com/hcl0ud/iamBlogPlatform.git",
@@ -27,6 +27,7 @@
     "eslint-plugin-prettier": "^4.2.1",
     "eslint-plugin-promise": "^6.0.0",
     "nodemon": "^2.0.22",
+    "pm2": "^5.3.0",
     "prettier": "^2.8.7"
   },
   "author": "Seungki kim <ti9918@gmail.com>"

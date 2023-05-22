@@ -1,22 +1,39 @@
 const { db } = require("../models");
+const jwt = require("../module/jwt");
+// const fs = require("fs");
 
 const user = db.collection("user");
 
-exports.register = async (ctx) => {
-  const { email, pw } = ctx.request.body;
+exports.getUserInfo = async (ctx) => {};
 
-  if (await user.findOne({ email: email }))
-    ctx.body = { status: false, msg: "회원가입 실패" };
+exports.register = async (ctx) => {
+  const { userEmail, userPassword } = ctx.request.body;
+
+  if (await user.findOne({ email: userEmail }))
+    ctx.body = { status: 200, resultCode: 0 };
   else {
-    await user.insertOne({ email: email, pw: pw });
-    ctx.body = { status: true, msg: "회원가입 성공" };
+    await user.insertOne({ email: userEmail, pw: userPassword });
+    ctx.body = { status: 200, resultCode: 1 };
   }
 };
 
 exports.login = async (ctx) => {
-  const { email, pw } = ctx.request.body;
+  const { userEmail, userPassword } = ctx.request.body;
 
-  if (!(await user.findOne({ email: email, pw: pw })))
-    ctx.body = { status: false, msg: "로그인 실패" };
-  else ctx.body = { status: true, msg: "로그인 성공" };
+  if (!(await user.findOne({ email: userEmail, pw: userPassword })))
+    ctx.body = {
+      status: 200,
+      resultCode: 0,
+    };
+  else {
+    const token = await jwt.sign(userEmail);
+    ctx.body = {
+      status: 200,
+      resultCode: 1,
+      data: {
+        userIdx: userEmail,
+        token: token.token,
+      },
+    };
+  }
 };
