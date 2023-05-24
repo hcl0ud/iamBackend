@@ -25,12 +25,13 @@ exports.getBoardData = async (ctx) => {
 };
 
 exports.writeBoard = async (ctx) => {
-  const data = ctx.request.body;
+  const { title, contents } = ctx.request.body;
 
   await board
     .insertOne({
-      time: time,
-      data: data,
+      writeTime: time,
+      boardTitle: title,
+      boardContents: contents,
     })
     .then((ctx.body = { status: 200, resultCode: 1 }))
     .catch((e) => {
