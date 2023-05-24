@@ -4,15 +4,17 @@ const jwt = require("../module/jwt");
 
 const user = db.collection("user");
 
-exports.getUserInfo = async (ctx) => {};
-
 exports.register = async (ctx) => {
-  const { userEmail, userPassword } = ctx.request.body;
+  const { userEmail, userName, userPassword } = ctx.request.body;
 
-  if (await user.findOne({ email: userEmail }))
+  if (await user.findOne({ userEmail: userEmail }))
     ctx.body = { status: 200, resultCode: 0 };
   else {
-    await user.insertOne({ email: userEmail, pw: userPassword });
+    await user.insertOne({
+      userEmail: userEmail,
+      userName: userName,
+      userPassword: userPassword,
+    });
     ctx.body = { status: 200, resultCode: 1 };
   }
 };
@@ -20,7 +22,9 @@ exports.register = async (ctx) => {
 exports.login = async (ctx) => {
   const { userEmail, userPassword } = ctx.request.body;
 
-  if (!(await user.findOne({ email: userEmail, pw: userPassword })))
+  if (
+    !(await user.findOne({ userEmail: userEmail, userPassword: userPassword }))
+  )
     ctx.body = {
       status: 200,
       resultCode: 0,
