@@ -12,5 +12,6 @@ router.post("/user/login", user.login);
 
 // BOARD
 router.post("/board/getBoard", board.getBoardData);
+router.post("/board/writeBoard", board.writeBoard);
 
 module.exports = router;
