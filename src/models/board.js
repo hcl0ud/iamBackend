@@ -1,19 +1,15 @@
 const { db } = require("./index");
 const dayjs = require("dayjs");
 
-let now = dayjs();
-let time = now.format().slice(0, 16).split("T").join(" ");
-
 const board = db.collection("board");
 
 exports.getBoardData = async (ctx) => {
-  const data = await board.find();
-
+  const data = await board.find({}, {}).toArray();
   try {
     ctx.body = {
       status: 200,
       resultCode: 1,
-      data: data,
+      data: data.reverse(),
     };
   } catch (error) {
     ctx.body = {
@@ -25,13 +21,18 @@ exports.getBoardData = async (ctx) => {
 };
 
 exports.writeBoard = async (ctx) => {
-  const { title, contents } = ctx.request.body;
+  const { boardTitle, boardContents, userName } = ctx.request.body;
+
+  let now = dayjs();
+  let time = now.format().slice(0, 19).split("T").join(" ");
 
   await board
     .insertOne({
       writeTime: time,
-      boardTitle: title,
-      boardContents: contents,
+      boardTitle: boardTitle,
+      boardContents: boardContents,
+      userName: userName,
+      likeCount: 0,
     })
     .then((ctx.body = { status: 200, resultCode: 1 }))
     .catch((e) => {

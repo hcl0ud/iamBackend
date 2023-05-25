@@ -7,11 +7,11 @@ const board = require("../models/board");
 
 // API
 // USER
-router.post("/user/register", user.register);
-router.post("/user/login", user.login);
+router.post("/user/register", user.register).post("/user/login", user.login);
 
 // BOARD
-router.post("/board/getBoard", board.getBoardData);
-router.post("/board/writeBoard", board.writeBoard);
+router
+  .post("/board/getBoard", board.getBoardData)
+  .post("/board/writeBoard", board.writeBoard);
 
 module.exports = router;
