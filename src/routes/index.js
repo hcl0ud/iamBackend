@@ -7,7 +7,10 @@ const board = require("../models/board");
 
 // API
 // USER
-router.post("/user/register", user.register).post("/user/login", user.login);
+router
+  .post("/user/register", user.register)
+  .post("/user/login", user.login)
+  .post("/user/getUserInfo", user.getUserInfo);
 
 // BOARD
 router
