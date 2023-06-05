@@ -1,5 +1,5 @@
 const Router = require("@koa/router");
-const router = new Router();
+const router = new Router({ prefix: "/" });
 
 // DB 불러오기
 const user = require("../models/user");
