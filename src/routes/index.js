@@ -13,7 +13,7 @@ router
 
 // BOARD
 router
-  .post("board/getBoard", board.getBoardData)
+  .post("board/getBoard", board.getBoardList)
   .post("board/writeBoard", board.writeBoard);
 
 module.exports = router;

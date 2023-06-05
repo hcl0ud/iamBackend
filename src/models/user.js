@@ -47,7 +47,7 @@ exports.login = async (ctx) => {
 exports.getUserInfo = async (ctx) => {
   const { userIdx } = ctx.request.body;
 
-  if (commonUtil.isCheckNull(userIdx)) {
+  if (userIdx) {
     const { userEmail, userName, userIntro } = await user.findOne({
       userEmail: userIdx,
     });

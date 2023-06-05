@@ -4,7 +4,7 @@ const dayjs = require("dayjs");
 const board = db.collection("board");
 const user = db.collection("user");
 
-exports.getBoardData = async (ctx) => {
+exports.getBoardList = async (ctx) => {
   const data = await board.find({}, {}).toArray();
   try {
     ctx.body = {
