@@ -5,16 +5,15 @@ const router = new Router();
 const user = require("../models/user");
 const board = require("../models/board");
 
-// API
 // USER
 router
-  .post("/user/register", user.register)
-  .post("/user/login", user.login)
-  .post("/user/getUserInfo", user.getUserInfo);
+  .post("user/register", user.register)
+  .post("user/login", user.login)
+  .post("user/getUserInfo", user.getUserInfo);
 
 // BOARD
 router
-  .post("/board/getBoard", board.getBoardData)
-  .post("/board/writeBoard", board.writeBoard);
+  .post("board/getBoard", board.getBoardData)
+  .post("board/writeBoard", board.writeBoard);
 
 module.exports = router;
