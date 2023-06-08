@@ -10,7 +10,10 @@ router
   .post("user/register", user.register)
   .post("user/login", user.login)
   .post("user/getUserInfo", user.getUserInfo)
-  .post("user/getBoardList", user.getBoardList);
+  .post("user/getBoardList", user.getBoardList)
+  .post("user/updateProfile", user.updateProfile)
+  .post("user/uploadProfile/profilePicture", user.uploadProfilePicture);
+
 // BOARD
 router
   .post("board/getBoardList", board.getBoardList)

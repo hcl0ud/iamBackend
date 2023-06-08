@@ -7,6 +7,11 @@ const client = new MongoClient(uri, {
   useUnifiedTopology: true,
   serverApi: ServerApiVersion.v1,
 });
-exports.db = client.db("IamDB");
 
 client.connect(() => {}).then((r) => console.log("Connected to MongoDB"));
+
+exports.db = client.db("IamDB");
+
+exports.disconnect = async () => {
+  await client.close().then((r) => console.log("Disconnected to MongoDB"));
+};
