@@ -67,3 +67,21 @@ exports.getUserInfo = async (ctx) => {
     };
   }
 };
+
+exports.getBoardList = async (ctx) => {
+  const { userIdx } = ctx.request.body
+  const data = await board.find({userEmail:userIdx}, {}).toArray();
+  try {
+    ctx.body = {
+      status: 200,
+      resultCode: 1,
+      data: data.reverse(),
+    };
+  } catch (error) {
+    ctx.body = {
+      status: 500,
+      resultCode: 0,
+      error: "데이터 조회 실패",
+    };
+  }
+};

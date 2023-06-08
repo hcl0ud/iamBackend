@@ -9,8 +9,8 @@ const board = require("../models/board");
 router
   .post("user/register", user.register)
   .post("user/login", user.login)
-  .post("user/getUserInfo", user.getUserInfo);
-
+  .post("user/getUserInfo", user.getUserInfo)
+  .post("user/getBoardList", user.getBoardList);
 // BOARD
 router
   .post("board/getBoardList", board.getBoardList)
