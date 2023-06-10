@@ -27,17 +27,16 @@ exports.writeBoard = async (ctx) => {
   let time = now.format().slice(0, 19).split("T").join(" ");
 
   if (ctx.request.body) {
-    const { boardTitle, boardContents, userName } = ctx.request.body;
-    const userIdx = await user.findOne({
-      userEmail: userName.userIdx,
-    });
+    const { boardTitle, boardContents, userIdx } = ctx.request.body;
+    const userInfo = await user.findOne({ userEmail: userIdx });
 
     await board
       .insertOne({
         writeTime: time,
         boardTitle: boardTitle,
         boardContents: boardContents,
-        userName: userIdx.userName,
+        userName: userInfo.userName,
+        userEmail: userInfo.userEmail,
         likeCount: 0,
       })
       .then((ctx.body = { status: 200, resultCode: 1 }))
