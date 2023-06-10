@@ -1,6 +1,9 @@
 const { db } = require("./index");
 const board = db.collection("board");
 
+// 텍스트 인덱스 생성
+board.createIndex({ boardTitle: "text", boardcontents: "text" });
+
 exports.search = async (ctx) => {
   const { keyword } = ctx.request.body;
 
