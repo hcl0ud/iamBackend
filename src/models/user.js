@@ -1,9 +1,22 @@
 const { db } = require("../models");
 const jwt = require("../module/jwt");
+
 const multer = require("koa-multer");
 // const fs = require("fs");
 
-const upload = multer({ dest: "uploads/" });
+// 파일 업로드를 위한 Multer 설정
+const path = require('path');
+const upload = multer({
+  storage: multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, __dirname + '/uploads/');
+    },
+    filename: function (req, file, cb) {
+      cb(null, new Date().valueOf() + path.extname(file.originalname));
+    },
+  }),
+});
+
 const user = db.collection("user");
 const board = db.collection("board");
 

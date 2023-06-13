@@ -26,9 +26,9 @@ router
 router
   .post("board/getBoardList", board.getBoardList)
   .post("board/writeBoard", board.writeBoard)
-  .post("board/getBoardDetail", board.getBoardDetail) // 6.13 수정
-  .post("board/getcommentList", board.getcommentList) // 6.13 수정
-  .post("board/writecomment", board.writecomment); // 6.13 수정
+  .post("board/getBoardDetail", board.getBoardDetail) 
+  .post("board/getcommentList", board.getcommentList) 
+  .post("board/writecomment", board.writecomment); 
 
 // SEARCH
 router.post("search", search.search);
