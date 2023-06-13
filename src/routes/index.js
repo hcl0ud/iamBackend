@@ -4,7 +4,6 @@ const router = new Router({ prefix: "/" });
 // API 연결
 const user = require("../models/user");
 const board = require("../models/board");
-const search = require("../models/search");
 
 // File Sever
 const { upload } = require("../module/ftp");
@@ -26,11 +25,7 @@ router
 router
   .post("board/getBoardList", board.getBoardList)
   .post("board/writeBoard", board.writeBoard)
-  .post("board/getBoardDetail", board.getBoardDetail) // 6.13 수정
-  .post("board/getcommentList", board.getcommentList) // 6.13 수정
-  .post("board/writecomment", board.writecomment); // 6.13 수정
-
-// SEARCH
-router.post("search", search.search);
+  .post("board/getBoardDetail", board.getBoardDetail)
+  .post("board/search", board.search);
 
 module.exports = router;
