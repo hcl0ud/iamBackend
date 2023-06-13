@@ -5,8 +5,6 @@ const router = new Router({ prefix: "/" });
 const user = require("../models/user");
 const board = require("../models/board");
 const search = require("../models/search");
-const comment = require("../models/comment"); // comment DB 추가
-
 
 // File Sever
 const { upload } = require("../module/ftp");
@@ -28,9 +26,9 @@ router
 router
   .post("board/getBoardList", board.getBoardList)
   .post("board/writeBoard", board.writeBoard)
-  .post("board/getBoardDetail", board.getBoardDetail) // 6.13 
-  .post("board/getcommentList", comment.getcommentList) // 6.13
-  .post("board/writecomment", comment.writecomment); // 6.13 
+  .post("board/getBoardDetail", board.getBoardDetail) // 6.13 수정
+  .post("board/getcommentList", board.getcommentList) // 6.13 수정
+  .post("board/writecomment", board.writecomment); // 6.13 수정
 
 // SEARCH
 router.post("search", search.search);

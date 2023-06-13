@@ -6,7 +6,6 @@ const multer = require("koa-multer");
 const upload = multer({ dest: "uploads/" });
 const user = db.collection("user");
 const board = db.collection("board");
-const comment = db.collection("comment"); // comment 추가
 
 exports.register = async (ctx) => {
   const { userEmail, userName, userPassword } = ctx.request.body;
@@ -140,26 +139,6 @@ exports.getBoardList = async (ctx) => {
       status: 500,
       resultCode: 0,
       error: "데이터 조회 실패",
-    };
-  }
-};
-
-// 6.13 
-
-exports.getcommentList = async (ctx) => {
-  const data = await comment.find({}, {}).toArray();
-  try {
-    ctx.body = {
-      status: 200,
-      resultCode: 1,
-      data: data.reverse(),
-    };
-  } catch (e) {
-    ctx.body = {
-      status: 200,
-      resultCode: 0,
-      error: "데이터 조회 실패",
-      msg: e,
     };
   }
 };
