@@ -1,7 +1,4 @@
-const express = require('express');
-const app = express();
-
-// Crew 모델 정의
+// 크루 모델 정의
 const Crew = mongoose.model('Crew', {
   name: String,
   introduction: String,
@@ -11,7 +8,7 @@ const Crew = mongoose.model('Crew', {
 app.use(express.static('public'));
 
 // 추천 크루 가져오는 API 엔드포인트
-app.get('/api/get-recommended-crew', (req, res) => {
+app.get('/crew/get-recommended-crew', (req, res) => {
   // 예시 데이터로 대체
   const recommendedCrews = [
     {
@@ -35,7 +32,7 @@ app.get('/api/get-recommended-crew', (req, res) => {
 });
 
 // 크루 가입 API 엔드포인트
-app.post('/api/join-crew', (req, res) => {
+app.router('/crew/join-crew', (req, res) => {
   const { crewId } = req.body;
 
   // 크루 가입 로직 작성

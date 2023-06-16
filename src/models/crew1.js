@@ -1,29 +1,23 @@
-const express = require('express');
-const app = express();
-const bodyParser = require('body-parser');
-
 // 게시물 모델 정의
-const Post = mongoose.model('Post', {
+
   title: String,
   content: String,
   createdAt: {
     type: Date,
     default: Date.now,
   },
-});
+
 
 // 크루 모델 정의
-const Crew = mongoose.model('Crew', {
+
   name: String,
   introduction: String,
   profileImage: String,
-  posts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Post' }],
-});
-
+  
 app.use(bodyParser.urlencoded({ extended: false }));
 
 // 크루 생성 API 엔드포인트
-app.post('/api/create-crew', (req, res) => {
+app.router('/crew/create-crew', (req, res) => {
   const { name, introduction, profileImage } = req.body;
 
   // 중복된 크루명인지 확인
@@ -58,7 +52,7 @@ app.post('/api/create-crew', (req, res) => {
 });
 
 // 게시물 조회 API 엔드포인트
-app.get('/api/posts/:crewId', (req, res) => {
+app.get('/crew/posts/:crewId', (req, res) => {
   const { crewId } = req.params;
 
   // 크루에 속한 게시물 조회
@@ -80,7 +74,7 @@ app.get('/api/posts/:crewId', (req, res) => {
 });
 
 // 게시물 생성 API 엔드포인트
-app.post('/api/create-post', (req, res) => {
+app.router('/crew/create-post', (req, res) => {
   const { crewId, title, content } = req.body;
 
   // 크루에 속한 게시물 생성
