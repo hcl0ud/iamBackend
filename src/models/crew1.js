@@ -1,3 +1,4 @@
+const { db } = require(".")
 // 게시물 모델 정의
 
   title: String,

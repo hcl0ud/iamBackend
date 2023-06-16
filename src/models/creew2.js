@@ -1,3 +1,5 @@
+const { db } = require (".")
+
 // 크루 모델 정의
 const Crew = mongoose.model('Crew', {
   name: String,
