@@ -84,32 +84,32 @@ exports.getUserInfo = async (ctx) => {
 };
 
 exports.updateProfile = async (ctx) => {
-  let { userIdx, userEmail, userName, userPassword, userIntro } =
-    ctx.request.body;
+  const { userIdx, userIntro } = ctx.request.body;
 
-  if (
-    await user.updateOne(
+  try {
+    const result = await user.updateOne(
       { userEmail: userIdx },
-      {
-        $set: {
-          userEmail: userEmail,
-          userName: userName,
-          userPassword: userPassword,
-          userIntro: userIntro,
-        },
-      }
-    )
-  ) {
-    ctx.body = {
-      status: 200,
-      resultCode: 1,
-      msg: "업데이트 성공!",
-    };
-  } else {
+      { $set: { userIntro } }
+    );
+
+    if (result.modifiedCount > 0) {
+      ctx.body = {
+        status: 200,
+        resultCode: 1,
+        message: "소개말을 적었습니다.",
+      };
+    } else {
+      ctx.body = {
+        status: 200,
+        resultCode: 0,
+        message: "업데이트 실패!",
+      };
+    }
+  } catch (error) {
     ctx.body = {
       status: 200,
       resultCode: 0,
-      msg: "업데이트 실패!",
+      error: "서버 오류",
     };
   }
 };
