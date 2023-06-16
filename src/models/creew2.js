@@ -1,12 +1,5 @@
 const express = require('express');
 const app = express();
-const mongoose = require('mongoose');
-
-// MongoDB 연결 설정
-mongoose.connect('mongodb+srv://91714806:AKfnPw7DsfN6sOYE@iamdb.qe5wfqx.mongodb.net/', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
 
 // Crew 모델 정의
 const Crew = mongoose.model('Crew', {
@@ -49,8 +42,4 @@ app.post('/api/join-crew', (req, res) => {
   // crewId를 기반으로 크루를 조회하고, 사용자를 크루에 추가하는 로직을 구현
 
   res.status(200).send('크루 가입이 완료되었습니다.');
-});
-
-app.listen(5173, () => {
-  console.log('서버가 5173번 포트에서 실행 중입니다.');
 });

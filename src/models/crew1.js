@@ -1,13 +1,6 @@
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
-const mongoose = require('mongoose');
-
-// MongoDB 연결 설정
-mongoose.connect('mongodb+srv://91714806:AKfnPw7DsfN6sOYE@iamdb.qe5wfqx.mongodb.net/', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
 
 // 게시물 모델 정의
 const Post = mongoose.model('Post', {
@@ -122,7 +115,3 @@ app.post('/api/create-post', (req, res) => {
   });
 });
 
-// 서버 시작
-app.listen(5173, () => {
-  console.log('서버가 시작되었습니다.');
-});
