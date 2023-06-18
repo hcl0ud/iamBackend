@@ -121,6 +121,7 @@ exports.search = async (ctx) => {
 };
 
 exports.getCommentList = async (ctx) => {
+
   const data = await board.find({}, {}).toArray();
   try {
     ctx.body = {
