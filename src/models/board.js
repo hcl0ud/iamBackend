@@ -48,25 +48,35 @@ exports.writeBoard = async (ctx) => {
   }
 };
 
-exports.getBoardDetail = async (ctx) => {
-  const { _id } = ctx.request.body;
+exports.getBoardDetail = (ctx) => {
+  const { _id } = ctx.query;
 
   if (_id) {
-    const boardData = await board.findOne({ _id: _id });
-
-    if (boardData) {
-      ctx.body = {
-        status: 200,
-        resultCode: 1,
-        data: boardData,
-      };
-    } else {
-      ctx.body = {
-        status: 200,
-        resultCode: 0,
-        error: "게시물을 찾을 수 없습니다.",
-      };
-    }
+    board
+      .findOne({ _id })
+      .then((boardData) => {
+        if (boardData) {
+          ctx.body = {
+            status: 200,
+            resultCode: 1,
+            data: boardData,
+          };
+        } else {
+          ctx.body = {
+            status: 200,
+            resultCode: 0,
+            error: "게시물을 찾을 수 없습니다.",
+          };
+        }
+      })
+      .catch((error) => {
+        ctx.body = {
+          status: 200,
+          resultCode: 0,
+          error: "게시물 상세 정보를 가져오는 중에 오류가 발생했습니다.",
+          message: error.message,
+        };
+      });
   } else {
     ctx.body = {
       status: 200,
@@ -76,19 +86,85 @@ exports.getBoardDetail = async (ctx) => {
   }
 };
 
-exports.deleteBoard = async (ctx) => {
-  const { postId } = ctx.request.body;
+exports.deleteBoard = (ctx) => {
+  const { postId } = ctx.query;
 
-  try {
-    const result = await board.deleteOne({ _id: postId });
+  board
+    .deleteOne({ _id: postId })
+    .then((deletedBoard) => {
+      if (deletedBoard) {
+        ctx.response.redirect('/index.html');
+      } else {
+        ctx.body = { status: 200, resultCode: 0, error: "게시물 삭제 오류" };
+      }
+    })
+    .catch((e) => {
+      ctx.body = { status: 200, resultCode: 0, error: e };
+    });
+};
 
-    if (result.deletedCount === 1) {
-      ctx.body = { status: 200, resultCode: 1, message: "게시물을 삭제하였습니다." };
+
+exports.getCommentList = async (ctx) => {
+  const postId = ctx.query.postId;
+  if (postId) {
+    const boardData = await board.findOne({ _id: postId });
+
+    if (boardData) {
+      const comments = boardData.comments;
+
+      ctx.body = { status: 200, resultCode: 1, comments };
     } else {
-      ctx.body = { status: 200, resultCode: 0, error: "게시물 삭제 오류" };
+      ctx.body = { status: 200, resultCode: 0, error: "게시물을 찾을 수 없습니다." };
     }
-  } catch (e) {
-    ctx.body = { status: 200, resultCode: 0, error: e };
+  } else {
+    ctx.body = { status: 200, resultCode: 0, error: "postId를 지정해주세요." };
+  }
+};
+
+exports.writeComment = async (ctx) => {
+  let now = dayjs();
+  let time = now.format().slice(0, 19).split("T").join(" ");
+
+  if (ctx.request.body) {
+    const { commentContents, userIdx, postId } = ctx.request.body;
+    const userInfo = await user.findOne({ userEmail: userIdx });
+    const boardData = await board.findOne({ _id: postId });
+
+    if (boardData) {
+      const newComment = {
+        writeTime: time,
+        commentContents: commentContents,
+        userName: userInfo.userName,
+        userEmail: userInfo.userEmail,
+        likeCount: 0,
+      };
+
+      await boardData.comments.insertOne(newComment);
+
+      ctx.body = { status: 200, resultCode: 1 };
+    } else {
+      ctx.body = { status: 200, resultCode: 0, error: "게시물을 찾을 수 없습니다." };
+    }
+  } else {
+    ctx.body = { status: 200, resultCode: 0, error: "include null data" };
+  }
+};
+
+exports.deleteComment = async (ctx) => {
+  const { commentId, postId } = ctx.query;
+
+  const boardData = await board.findOne({ _id: postId });
+
+  if (boardData) {
+    const deletionResult = await boardData.comments.deleteOne({ _id: commentId });
+
+    if (deletionResult !== null && deletionResult !== undefined) {
+      ctx.body = { status: 200, resultCode: 1, message: "댓글을 삭제하였습니다." };
+    } else {
+      ctx.body = { status: 200, resultCode: 0, error: "댓글을 찾을 수 없습니다." };
+    }
+  } else {
+    ctx.body = { status: 200, resultCode: 0, error: "게시물을 찾을 수 없습니다." };
   }
 };
 
@@ -117,65 +193,5 @@ exports.search = async (ctx) => {
       resultCode: 0,
       error: "search) include null data",
     };
-  }
-};
-
-exports.getCommentList = async (ctx) => {
-
-  const data = await board.find({}, {}).toArray();
-  try {
-    ctx.body = {
-      status: 200,
-      resultCode: 1,
-      data: data.reverse(),
-    };
-  } catch (e) {
-    ctx.body = {
-      status: 200,
-      resultCode: 0,
-      error: "데이터 조회 실패",
-      msg: e,
-    };
-  }
-};
-
-exports.writeComment = async (ctx) => {
-  let now = dayjs();
-  let time = now.format().slice(0, 19).split("T").join(" ");
-
-  if (ctx.request.body) {
-    const { commentContents, userIdx } = ctx.request.body;
-    const userInfo = await user.findOne({ userEmail: userIdx });
-
-    await board
-      .insertOne({
-        writeTime: time,
-        commentContents: commentContents,
-        userName: userInfo.userName,
-        userEmail: userInfo.userEmail,
-        likeCount: 0,
-      })
-      .then((ctx.body = { status: 200, resultCode: 1 }))
-      .catch((e) => {
-        ctx.body = { status: 200, resultCode: 0, error: e };
-      });
-  } else {
-    ctx.body = { status: 200, resultCode: 0, error: "include null data" };
-  }
-};
-
-exports.deleteComment = async (ctx) => {
-  const { commentId } = ctx.request.body;
-
-  try {
-    const result = await board.deleteOne({ _id: commentId });
-
-    if (result.deletedCount === 1) {
-      ctx.body = { status: 200, resultCode: 1, message: "댓글을 삭제하였습니다." };
-    } else {
-      ctx.body = { status: 200, resultCode: 0, error: "댓글 삭제 오류" };
-    }
-  } catch (e) {
-    ctx.body = { status: 200, resultCode: 0, error: e };
   }
 };
