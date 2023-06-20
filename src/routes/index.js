@@ -21,11 +21,11 @@ router
 router
   .post("board/getBoardList", board.getBoardList)
   .post("board/writeBoard", board.writeBoard)
-  .post("board/getBoardDetail", board.getBoardDetail)
-  .post("board/deleteBoard", board.deleteBoard)
-  .post("board/getCommentList", board.getCommentList)
+  .get("board/getBoardDetail", board.getBoardDetail)
+  .get("board/deleteBoard", board.deleteBoard)
+  .get("board/getCommentList", board.getCommentList)
   .post("board/writeComment", board.writeComment)
-  .post("board/deleteComment", board.deleteComment)
+  .get("board/deleteComment", board.deleteComment)
   .post("board/search", board.search);
 
 module.exports = router;
