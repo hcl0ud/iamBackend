@@ -19,13 +19,13 @@ router
 
 // BOARD
 router
-  .post("board/getBoardList", board.getBoardList)
-  .post("board/writeBoard", board.writeBoard)
   .get("board/getBoardDetail", board.getBoardDetail)
   .get("board/deleteBoard", board.deleteBoard)
   .get("board/getCommentList", board.getCommentList)
-  .post("board/writeComment", board.writeComment)
   .get("board/deleteComment", board.deleteComment)
+  .post("board/getBoardList", board.getBoardList)
+  .post("board/writeBoard", board.writeBoard)
+  .post("board/writeComment", board.writeComment)
   .post("board/search", board.search);
 
 module.exports = router;

@@ -192,28 +192,18 @@ exports.deleteComment = async (ctx) => {
 
 exports.search = async (ctx) => {
   const { searchQuery } = ctx.request.body;
-  if (searchQuery) {
-    const data = await board
-      .find({ $text: { $search: searchQuery } })
-      .toArray();
-    if (data) {
-      ctx.body = {
-        status: 200,
-        resultCode: 1,
-        data: data,
-      };
-    } else {
-      ctx.body = {
-        status: 200,
-        resultCode: 0,
-        error: "데이터 조회 실패",
-      };
-    }
+  const d = await board.find({ $text: { $search: searchQuery } }).toArray();
+  if (d) {
+    ctx.body = {
+      status: 200,
+      resultCode: 1,
+      data: d,
+    };
   } else {
     ctx.body = {
       status: 200,
       resultCode: 0,
-      error: "search) include null data",
+      error: "데이터 조회 실패",
     };
   }
 };
