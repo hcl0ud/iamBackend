@@ -37,6 +37,7 @@ exports.writeBoard = async (ctx) => {
         boardContents: boardContents,
         userName: userInfo.userName,
         userEmail: userInfo.userEmail,
+        profileImg: userInfo.profileImg,
         likeCount: 0,
       })
       .then((ctx.body = { status: 200, resultCode: 1 }))
@@ -93,7 +94,7 @@ exports.deleteBoard = (ctx) => {
     .deleteOne({ _id: postId })
     .then((deletedBoard) => {
       if (deletedBoard) {
-        ctx.response.redirect('/index.html');
+        ctx.response.redirect("/index.html");
       } else {
         ctx.body = { status: 200, resultCode: 0, error: "게시물 삭제 오류" };
       }
@@ -102,7 +103,6 @@ exports.deleteBoard = (ctx) => {
       ctx.body = { status: 200, resultCode: 0, error: e };
     });
 };
-
 
 exports.getCommentList = async (ctx) => {
   const postId = ctx.query.postId;
@@ -114,7 +114,11 @@ exports.getCommentList = async (ctx) => {
 
       ctx.body = { status: 200, resultCode: 1, comments };
     } else {
-      ctx.body = { status: 200, resultCode: 0, error: "게시물을 찾을 수 없습니다." };
+      ctx.body = {
+        status: 200,
+        resultCode: 0,
+        error: "게시물을 찾을 수 없습니다.",
+      };
     }
   } else {
     ctx.body = { status: 200, resultCode: 0, error: "postId를 지정해주세요." };
@@ -143,7 +147,11 @@ exports.writeComment = async (ctx) => {
 
       ctx.body = { status: 200, resultCode: 1 };
     } else {
-      ctx.body = { status: 200, resultCode: 0, error: "게시물을 찾을 수 없습니다." };
+      ctx.body = {
+        status: 200,
+        resultCode: 0,
+        error: "게시물을 찾을 수 없습니다.",
+      };
     }
   } else {
     ctx.body = { status: 200, resultCode: 0, error: "include null data" };
@@ -156,15 +164,29 @@ exports.deleteComment = async (ctx) => {
   const boardData = await board.findOne({ _id: postId });
 
   if (boardData) {
-    const deletionResult = await boardData.comments.deleteOne({ _id: commentId });
+    const deletionResult = await boardData.comments.deleteOne({
+      _id: commentId,
+    });
 
     if (deletionResult !== null && deletionResult !== undefined) {
-      ctx.body = { status: 200, resultCode: 1, message: "댓글을 삭제하였습니다." };
+      ctx.body = {
+        status: 200,
+        resultCode: 1,
+        message: "댓글을 삭제하였습니다.",
+      };
     } else {
-      ctx.body = { status: 200, resultCode: 0, error: "댓글을 찾을 수 없습니다." };
+      ctx.body = {
+        status: 200,
+        resultCode: 0,
+        error: "댓글을 찾을 수 없습니다.",
+      };
     }
   } else {
-    ctx.body = { status: 200, resultCode: 0, error: "게시물을 찾을 수 없습니다." };
+    ctx.body = {
+      status: 200,
+      resultCode: 0,
+      error: "게시물을 찾을 수 없습니다.",
+    };
   }
 };
 
