@@ -14,7 +14,7 @@ const upload = multer({
               { recursive: true }
             );
           }
-          cb(null, path.resolve("uploads/profile/", req.body.userIdx));
+          cb(null, "uploads/profile/", req.body.userIdx);
         }
       );
     },

@@ -144,7 +144,6 @@ exports.uploadProfilePicture = async (ctx) => {
 exports.getBoardList = async (ctx) => {
   const { userIdx } = ctx.request.body;
   const data = await board.find({ userEmail: userIdx }, {}).toArray();
-  console.log(data);
   try {
     ctx.body = {
       status: 200,
