@@ -29,24 +29,25 @@ exports.register = async (ctx) => {
 exports.login = async (ctx) => {
   const { userEmail, userPassword } = ctx.request.body;
 
-  if (
-    await user.findOne({ userEmail: userEmail, userPassword: userPassword })
-  ) {
-    const token = await jwt.sign(userEmail);
-    ctx.body = {
-      status: 200,
-      resultCode: 1,
-      data: {
-        userIdx: userEmail,
-        token: token.token,
-      },
-    };
-  } else {
-    ctx.body = {
-      status: 200,
-      resultCode: 0,
-    };
-  }
+  await user
+    .findOne({ userEmail: userEmail, userPassword: userPassword })
+    .then(async (r) => {
+      const token = await jwt.sign(r.userEmail);
+      ctx.body = {
+        status: 200,
+        resultCode: 1,
+        data: {
+          userIdx: r.userEmail,
+          token: token.token,
+        },
+      };
+    })
+    .catch((e) => {
+      ctx.body = {
+        status: 200,
+        resultCode: 0,
+      };
+    });
 };
 
 exports.getUserInfo = async (ctx) => {
