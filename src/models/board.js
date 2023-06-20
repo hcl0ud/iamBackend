@@ -37,6 +37,7 @@ exports.writeBoard = async (ctx) => {
         boardContents: boardContents,
         userName: userInfo.userName,
         userEmail: userInfo.userEmail,
+        profileImg: userInfo.profileImg,
         likeCount: 0,
       })
       .then((ctx.body = { status: 200, resultCode: 1 }))
@@ -83,7 +84,11 @@ exports.deleteBoard = async (ctx) => {
     const result = await board.deleteOne({ _id: postId });
 
     if (result.deletedCount === 1) {
-      ctx.body = { status: 200, resultCode: 1, message: "게시물을 삭제하였습니다." };
+      ctx.body = {
+        status: 200,
+        resultCode: 1,
+        message: "게시물을 삭제하였습니다.",
+      };
     } else {
       ctx.body = { status: 200, resultCode: 0, error: "게시물 삭제 오류" };
     }
@@ -121,7 +126,6 @@ exports.search = async (ctx) => {
 };
 
 exports.getCommentList = async (ctx) => {
-
   const data = await board.find({}, {}).toArray();
   try {
     ctx.body = {
@@ -171,7 +175,11 @@ exports.deleteComment = async (ctx) => {
     const result = await board.deleteOne({ _id: commentId });
 
     if (result.deletedCount === 1) {
-      ctx.body = { status: 200, resultCode: 1, message: "댓글을 삭제하였습니다." };
+      ctx.body = {
+        status: 200,
+        resultCode: 1,
+        message: "댓글을 삭제하였습니다.",
+      };
     } else {
       ctx.body = { status: 200, resultCode: 0, error: "댓글 삭제 오류" };
     }

@@ -6,7 +6,7 @@ const user = require("../models/user");
 const board = require("../models/board");
 
 // File Sever
-const { upload } = require("../module/ftp");
+const { upload } = require("../module/multer");
 
 // USER
 router
@@ -15,11 +15,7 @@ router
   .post("user/getUserInfo", user.getUserInfo)
   .post("user/getBoardList", user.getBoardList)
   .post("user/updateProfile", user.updateProfile)
-  .post(
-    "user/uploadProfile/profilePicture",
-    upload.single("file"),
-    user.uploadProfilePicture
-  );
+  .post("user/uploadProfile", upload.single("file"), user.uploadProfilePicture);
 
 // BOARD
 router

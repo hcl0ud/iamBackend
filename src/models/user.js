@@ -1,21 +1,11 @@
+require("dotenv").config();
+const { API_IP, API_PORT } = process.env;
+
 const { db } = require("../models");
 const jwt = require("../module/jwt");
-
-const multer = require("koa-multer");
-// const fs = require("fs");
-
-// 파일 업로드를 위한 Multer 설정
-const path = require('path');
-const upload = multer({
-  storage: multer.diskStorage({
-    destination: function (req, file, cb) {
-      cb(null, __dirname + '/uploads/');
-    },
-    filename: function (req, file, cb) {
-      cb(null, new Date().valueOf() + path.extname(file.originalname));
-    },
-  }),
-});
+const fs = require("fs");
+const path = require("path");
+const send = require("koa-send");
 
 const user = db.collection("user");
 const board = db.collection("board");
@@ -63,18 +53,32 @@ exports.getUserInfo = async (ctx) => {
   const { userIdx } = ctx.request.body;
 
   if (userIdx) {
-    const { userEmail, userName, userIntro } = await user.findOne({
+    let { userEmail, userName, userIntro, profileImg } = await user.findOne({
       userEmail: userIdx,
     });
-    ctx.body = {
-      status: 200,
-      resultCode: 1,
-      data: {
-        userEmail: userEmail,
-        userName: userName,
-        userIntro: userIntro,
-      },
-    };
+
+    if (profileImg) {
+      ctx.body = {
+        status: 200,
+        resultCode: 1,
+        data: {
+          userEmail: userEmail,
+          userName: userName,
+          userIntro: userIntro,
+          profileImg: profileImg,
+        },
+      };
+    } else {
+      ctx.body = {
+        status: 200,
+        resultCode: 1,
+        data: {
+          userEmail: userEmail,
+          userName: userName,
+          userIntro: userIntro,
+        },
+      };
+    }
   } else {
     ctx.body = {
       status: 200,
@@ -116,13 +120,12 @@ exports.updateProfile = async (ctx) => {
 
 exports.uploadProfilePicture = async (ctx) => {
   const { userIdx } = ctx.request.body;
-  const { profilePicture } = ctx.request.body.files;
+  const file = ctx.request.file;
 
-  if (profilePicture) {
-    const picturePath = profilePicture.path;
+  if (file) {
     await user.updateOne(
-      { userIdx: userIdx },
-      { $set: { photoPath: picturePath } }
+      { userEmail: userIdx },
+      { $set: { profileImg: file.path } }
     );
     ctx.body = {
       status: 200,
@@ -141,6 +144,7 @@ exports.uploadProfilePicture = async (ctx) => {
 exports.getBoardList = async (ctx) => {
   const { userIdx } = ctx.request.body;
   const data = await board.find({ userEmail: userIdx }, {}).toArray();
+  console.log(data);
   try {
     ctx.body = {
       status: 200,
@@ -151,7 +155,7 @@ exports.getBoardList = async (ctx) => {
     ctx.body = {
       status: 500,
       resultCode: 0,
-      error: "데이터 조회 실패",
+      err: "데이터 조회 실패",
     };
   }
 };
