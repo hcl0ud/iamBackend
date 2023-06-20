@@ -1,11 +1,7 @@
 require("dotenv").config();
-const { API_IP, API_PORT } = process.env;
 
 const { db } = require("../models");
 const jwt = require("../module/jwt");
-const fs = require("fs");
-const path = require("path");
-const send = require("koa-send");
 
 const user = db.collection("user");
 const board = db.collection("board");
@@ -46,6 +42,7 @@ exports.login = async (ctx) => {
       ctx.body = {
         status: 200,
         resultCode: 0,
+        msg: e,
       };
     });
 };
