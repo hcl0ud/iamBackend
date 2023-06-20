@@ -9,7 +9,10 @@ const upload = multer({
         path.resolve("uploads/profile/", req.body.userIdx),
         (e) => {
           if (e) {
-            fs.mkdirSync(path.resolve("uploads/profile/", req.body.userIdx));
+            fs.promises.mkdir(
+              path.resolve("uploads/profile/", req.body.userIdx),
+              { recursive: true }
+            );
           }
           cb(null, path.resolve("uploads/profile/", req.body.userIdx));
         }
