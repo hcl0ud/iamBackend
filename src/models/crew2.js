@@ -4,10 +4,8 @@ const crew = db.collection("crew");
 const crewuser = db.collection("crewuser");
 
 // 크루가입
-exports.joinCrew = async (ctx) => { 
-
+exports.joinCrew = async (ctx) => {
   if (ctx.request.body) {
-
     const { crewId } = ctx.request.body;
     const userInfo = await user.findOne({ userEmail: userIdx });
     const userIdx = 123; // 사용할 userIdx 값
@@ -25,23 +23,22 @@ exports.joinCrew = async (ctx) => {
   } else {
     ctx.body = { status: 200, resultCode: 0, error: "include null data" };
   }
-
-}
+};
 
 // 추천크루조회
 exports.getCrewList = async (ctx) => {
-
   // 미가입된 크루중 우선 조회되는 3건
   // crew, crewuser 조인 필요
   const userInfo = await user.findOne({ userEmail: userIdx });
-  const crewuserList = await crewuser.find({ userName: userInfo.userName }, {}).toArray();
+  const crewuserList = await crewuser
+    .find({ userName: userInfo.userName }, {})
+    .toArray();
   const crewList = await crew.find({}, {}).toArray();
 
   let data = new Array(3);
   let dataCnt = 0;
 
   for (const crew of crewList) {
-
     const joined = false;
 
     for (const crewuser of crewuserList) {
@@ -51,12 +48,12 @@ exports.getCrewList = async (ctx) => {
       }
     }
 
-    if(!joined) {
+    if (!joined) {
       data.add(crew);
       dataCnt++;
     }
 
-    if(dataCnt == 3) {
+    if (dataCnt == 3) {
       break;
     }
   }
@@ -75,6 +72,4 @@ exports.getCrewList = async (ctx) => {
       msg: e,
     };
   }
-
-}
-
+};

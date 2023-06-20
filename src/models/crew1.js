@@ -3,8 +3,10 @@ const user = db.collection("user");
 const crew = db.collection("crew");
 const board = db.collection("board");
 
-// 크루 생성
-exports.createCrew = async (ctx) => {
+
+// 크루생성
+exports.createCrew = async (ctx) => { 
+
   if (ctx.request.body) {
     const maxCrew = await crew.find({ crewId: crewId }, {}).toArray();
     const currentCrewCount = maxCrew.length;
@@ -61,7 +63,7 @@ exports.createCrew = async (ctx) => {
 exports.getCrewBoardList = async (ctx) => {
   const { crewId } = ctx.request.body;
   const data = await board.find({ crewId: crewId }, {}).toArray();
-  
+
   try {
     ctx.body = {
       status: 200,
@@ -76,4 +78,3 @@ exports.getCrewBoardList = async (ctx) => {
       msg: e,
     };
   }
-};
