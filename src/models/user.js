@@ -120,6 +120,8 @@ exports.uploadProfilePicture = async (ctx) => {
   const { userIdx } = ctx.request.body;
   const file = ctx.request.file;
 
+  console.log(file);
+
   if (file) {
     await user.updateOne(
       { userEmail: userIdx },
