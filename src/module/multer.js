@@ -5,15 +5,15 @@ const path = require("path");
 const upload = multer({
   storage: multer.diskStorage({
     destination: async (req, file, cb) => {
-      console.log(req.body);
-      await fs.readdir("/uploads/profile/" + req.body.userIdx, (e) => {
-        console.log(e);
-        if (e) {
-          console.log(e);
-          fs.mkdirSync("/uploads/profile/" + req.body.userIdx);
+      await fs.readdir(
+        path.resolve(".." + ".." + "uploads/profile/") + req.body.userIdx,
+        (e) => {
+          if (e) {
+            fs.mkdirSync("/uploads/profile/" + req.body.userIdx);
+          }
+          cb(null, "uploads/profile/" + req.body.userIdx);
         }
-        cb(null, "uploads/profile/" + req.body.userIdx);
-      });
+      );
     },
     filename: (req, file, cb) => {
       const ext = path.extname(file.originalname);
