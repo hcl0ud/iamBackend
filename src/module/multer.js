@@ -11,7 +11,7 @@ const upload = multer({
           if (e) {
             fs.mkdirSync(path.resolve("uploads/profile/", req.body.userIdx));
           }
-          cb(null, "uploads/profile/" + req.body.userIdx);
+          cb(null, path.resolve("uploads/profile/", req.body.userIdx));
         }
       );
     },
