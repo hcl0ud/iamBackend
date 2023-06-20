@@ -121,6 +121,9 @@ exports.search = async (ctx) => {
 };
 
 exports.getCommentList = async (ctx) => {
+  
+  // 미가입된 크루중 우선 조회되는 3건
+  // crew, crewuser 조인 필요
 
   const data = await board.find({}, {}).toArray();
   try {

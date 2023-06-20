@@ -10,9 +10,11 @@ exports.joinCrew = async (ctx) => {
 
     const { crewId } = ctx.request.body;
     const userInfo = await user.findOne({ userEmail: userIdx });
+    const userIdx = 123; // 사용할 userIdx 값
+    const url = `http://localhost:5173/CrewMain?userIdx=${userIdx}`;
 
     await crewuser
-      .insertOne({
+      .UpdateOne({
         crewId: crewId,
         userName: userInfo.userName,
       })
@@ -43,7 +45,7 @@ exports.getCrewList = async (ctx) => {
     const joined = false;
 
     for (const crewuser of crewuserList) {
-      if(crew.crewId == crewuser.crewId) {
+      if(crew.crewId === crewuser.crewId) {
         joined = true;
         break;
       }
