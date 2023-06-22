@@ -4,7 +4,7 @@ const router = new Router({ prefix: "/" });
 // API 연결
 const user = require("../models/user");
 const board = require("../models/board");
-
+const crew = require("../models/crew");
 // File Sever
 const { upload } = require("../module/multer");
 
@@ -28,4 +28,6 @@ router
   .post("board/writeComment", board.writeComment)
   .post("board/search", board.search);
 
+// crew
+router.post("crew/createCrew", crew.createCrew);
 module.exports = router;

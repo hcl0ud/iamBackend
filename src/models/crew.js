@@ -23,6 +23,7 @@ exports.createCrew = async (ctx) => {
   }
 };
 
+
 // 크루 가입
 exports.JoinCrew = async (ctx) => {
   const crewName = ctx.request.body;
