@@ -50,7 +50,7 @@ exports.writeBoard = async (ctx) => {
 };
 
 exports.getBoardDetail = (ctx) => {
-  const { _id } = ctx.query;
+  const { _id } = ctx.query.id;
 
   if (_id) {
     board
