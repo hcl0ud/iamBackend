@@ -54,7 +54,7 @@ exports.getBoardDetail = (ctx) => {
 
   if (_id) {
     board
-      .findOne({ _id: ObjectId(_id) })
+      .findOne({ _id })
       .then((boardData) => {
         if (boardData) {
           ctx.response.body = {
