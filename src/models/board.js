@@ -57,13 +57,13 @@ exports.getBoardDetail = (ctx) => {
       .findOne({ _id })
       .then((boardData) => {
         if (boardData) {
-          ctx.response.body = {
+          ctx.body = {
             status: 200,
             resultCode: 1,
             data: boardData,
           };
         } else {
-          ctx.response.body = {
+          ctx.body = {
             status: 200,
             resultCode: 0,
             error: "게시물을 찾을 수 없습니다.",
@@ -71,7 +71,7 @@ exports.getBoardDetail = (ctx) => {
         }
       })
       .catch((error) => {
-        ctx.response.body = {
+        ctx.body = {
           status: 200,
           resultCode: 0,
           error: "게시물 상세 정보를 가져오는 중에 오류가 발생했습니다.",
@@ -79,7 +79,7 @@ exports.getBoardDetail = (ctx) => {
         };
       });
   } else {
-    ctx.response.body = {
+    ctx.body = {
       status: 200,
       resultCode: 0,
       error: "게시물 상세 정보를 가져올 수 없습니다.",
