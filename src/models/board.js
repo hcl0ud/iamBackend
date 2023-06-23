@@ -1,5 +1,6 @@
 const { db } = require("./index");
 const dayjs = require("dayjs");
+const { ObjectId } = require("mongodb");
 
 const board = db.collection("board");
 const user = db.collection("user");
@@ -49,42 +50,26 @@ exports.writeBoard = async (ctx) => {
   }
 };
 
-exports.getBoardDetail = (ctx) => {
-  const { _id } = ctx.query.id;
+exports.getBoardDetail = async (ctx) => {
+  const _id = new ObjectId(ctx.query.id);
 
-  if (_id) {
-    board
-      .findOne({ _id })
-      .then((boardData) => {
-        if (boardData) {
-          ctx.body = {
-            status: 200,
-            resultCode: 1,
-            data: boardData,
-          };
-        } else {
-          ctx.body = {
-            status: 200,
-            resultCode: 0,
-            error: "게시물을 찾을 수 없습니다.",
-          };
-        }
-      })
-      .catch((error) => {
-        ctx.body = {
-          status: 200,
-          resultCode: 0,
-          error: "게시물 상세 정보를 가져오는 중에 오류가 발생했습니다.",
-          message: error.message,
-        };
-      });
-  } else {
-    ctx.body = {
-      status: 200,
-      resultCode: 0,
-      error: "게시물 상세 정보를 가져올 수 없습니다.",
-    };
-  }
+  await board
+    .findOne({ _id: _id })
+    .then((boardData) => {
+      ctx.body = {
+        status: 200,
+        resultCode: 1,
+        data: boardData,
+      };
+    })
+    .catch((error) => {
+      ctx.body = {
+        status: 200,
+        resultCode: 0,
+        error: "게시물 상세 정보를 가져오는 중에 오류가 발생했습니다.",
+        message: error.message,
+      };
+    });
 };
 
 exports.deleteBoard = (ctx) => {
@@ -192,18 +177,21 @@ exports.deleteComment = async (ctx) => {
 
 exports.search = async (ctx) => {
   const { searchQuery } = ctx.request.body;
-  const d = await board.find({ $text: { $search: searchQuery } }).toArray();
-  if (d) {
-    ctx.body = {
-      status: 200,
-      resultCode: 1,
-      data: d,
-    };
-  } else {
-    ctx.body = {
-      status: 200,
-      resultCode: 0,
-      error: "데이터 조회 실패",
-    };
-  }
+  await board
+    .find({ $text: { $search: searchQuery } })
+    .toArray()
+    .then((r) => {
+      ctx.body = {
+        status: 200,
+        resultCode: 1,
+        data: r,
+      };
+    })
+    .catch((e) => {
+      ctx.body = {
+        status: 200,
+        resultCode: 0,
+        error: e,
+      };
+    });
 };
