@@ -31,5 +31,6 @@ router
 // crew
 router
   .post("crew/createCrew", crew.createCrew)
+  .post("crew/JoinCrew", crew.JoinCrew)
   .post("crew/getCrewList", crew.getCrewList);
 module.exports = router;
