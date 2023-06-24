@@ -29,5 +29,7 @@ router
   .post("board/search", board.search);
 
 // crew
-router.post("crew/createCrew", crew.createCrew);
+router
+  .post("crew/createCrew", crew.createCrew)
+  .post("crew/getCrewList", crew.getCrewList);
 module.exports = router;
