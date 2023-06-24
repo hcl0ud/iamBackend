@@ -4,7 +4,7 @@ const crew = db.collection("crew");
 
 // 크루생성
 exports.createCrew = async (ctx) => {
-  const { crewName, profileImg, crewIntro, userIdx } = ctx.request.body;
+  const { crewName, thumbnail, crewIntro, userIdx } = ctx.request.body;
   const userInfo = await user.findOne({ userEmail: userIdx });
 
   // 중복 크루 체크
