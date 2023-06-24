@@ -50,6 +50,23 @@ exports.writeBoard = async (ctx) => {
   }
 };
 
+exports.deleteBoard = (ctx) => {
+  const _id = new ObjectId(ctx.query.id);
+
+  board
+    .deleteOne({ _id: _id })
+    .then((deletedBoard) => {
+      if (deletedBoard) {
+        ctx.body = { status: 200, resultCode: 1, error: "게시물 삭제 완료" };
+      } else {
+        ctx.body = { status: 200, resultCode: 0, error: "게시물 삭제 오류" };
+      }
+    })
+    .catch((e) => {
+      ctx.body = { status: 200, resultCode: 0, error: e };
+    });
+};
+
 exports.getBoardDetail = async (ctx) => {
   const _id = new ObjectId(ctx.query.id);
 
@@ -72,27 +89,11 @@ exports.getBoardDetail = async (ctx) => {
     });
 };
 
-exports.deleteBoard = (ctx) => {
-  const { postId } = ctx.query;
-
-  board
-    .deleteOne({ _id: postId })
-    .then((deletedBoard) => {
-      if (deletedBoard) {
-        ctx.response.redirect("/index.html");
-      } else {
-        ctx.body = { status: 200, resultCode: 0, error: "게시물 삭제 오류" };
-      }
-    })
-    .catch((e) => {
-      ctx.body = { status: 200, resultCode: 0, error: e };
-    });
-};
 
 exports.getCommentList = async (ctx) => {
-  const postId = ctx.query.postId;
-  if (postId) {
-    const boardData = await board.findOne({ _id: postId });
+  const _id = new ObjectId(ctx.query.id);
+  if (_id) {
+    const boardData = await board.findOne({ _id: _id});
 
     if (boardData) {
       const comments = boardData.comments;
@@ -113,11 +114,12 @@ exports.getCommentList = async (ctx) => {
 exports.writeComment = async (ctx) => {
   let now = dayjs();
   let time = now.format().slice(0, 19).split("T").join(" ");
-
+  console.log(ctx.request.body);
   if (ctx.request.body) {
     const { commentContents, userIdx, postId } = ctx.request.body;
     const userInfo = await user.findOne({ userEmail: userIdx });
-    const boardData = await board.findOne({ _id: postId });
+    const boardData = await board.findOne({ _id : new ObjectId(postId)});
+    console.log(boardData);
 
     if (boardData) {
       const newComment = {
@@ -135,7 +137,7 @@ exports.writeComment = async (ctx) => {
       ctx.body = {
         status: 200,
         resultCode: 0,
-        error: "게시물을 찾을 수 없습니다.",
+        error: "댓글을 찾을 수 없습니다.",
       };
     }
   } else {
