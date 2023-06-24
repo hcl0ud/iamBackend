@@ -8,11 +8,6 @@ exports.createCrew = async (ctx) => {
   const { crewName, profileImg, crewIntro, userIdx } = ctx.request.body;
   const userInfo = await user.findOne({ userEmail: userIdx });
 
-  // 동일한 크루명이 있는지 확인
-  exports.createCrew = async (ctx) => {
-    const { crewName, profileImg, crewIntro, userIdx } = ctx.request.body;
-    const userInfo = await user.findOne({ userEmail: userIdx });
-
     // 동일한 크루명이 있는지 확인
     const SamecrewName = await crew.findOne({ crewName: crewName });
     if (SamecrewName) {
@@ -23,12 +18,11 @@ exports.createCrew = async (ctx) => {
         profileImg: profileImg,
         crewIntro: crewIntro,
         ownerName: userInfo.userName,
-        member: {},
+        member: 
       });
       ctx.body = { status: 200, resultCode: 1 };
     }
   };
-};
 
 // 크루 가입
 exports.JoinCrew = async (ctx) => {
