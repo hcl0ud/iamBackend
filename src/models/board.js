@@ -137,7 +137,7 @@ exports.writeComment = async (ctx) => {
   const userInfo = await user.findOne({ userEmail: userIdx });
   const boardData = await board.findOne({ _id: _id });
 
-  await boardData.comments.push({
+  boardData.comments.push({
     writeTime: time,
     commentContents: commentContents,
     userName: userInfo.userName,

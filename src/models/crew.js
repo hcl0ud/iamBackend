@@ -1,4 +1,5 @@
 const { db } = require(".");
+const { ObjectId } = require("mongodb");
 const user = db.collection("user");
 const crew = db.collection("crew");
 
@@ -20,10 +21,12 @@ exports.createCrew = async (ctx) => {
             userEmail: userInfo.userEmail,
             userName: userInfo.userName,
           },
-          crewMember: {
-            userEmail: userInfo.userEmail,
-            userName: userInfo.userName,
-          },
+          crewMember: [
+            {
+              userEmail: userInfo.userEmail,
+              userName: userInfo.userName,
+            },
+          ],
         })
         .then((r) => {
           ctx.body = { status: 200, resultCode: 1 };
@@ -44,17 +47,21 @@ exports.createCrew = async (ctx) => {
 
 // 크루 가입
 exports.JoinCrew = async (ctx) => {
-  const { userIdx, crewName } = ctx.request.body;
+  const { userIdx, crewIdx } = ctx.request.body;
+  const _id = new ObjectId(crewIdx);
   const userInfo = await user.findOne({ userEmail: userIdx });
+  const crewData = await crew.findOne({ _id: _id });
+
+  crewData.crewMember.push({
+    userEmail: userInfo.userEmail,
+    userName: userInfo.userName,
+  });
 
   await crew
     .updateOne(
-      { crewName: crewName },
+      { _id: _id },
       {
-        crewMember: {
-          userEmail: userInfo.userEmail,
-          userName: userInfo.userName,
-        },
+        $set: crewData,
       }
     )
     .then((ctx.body = { status: 200, resultCode: 1 }))
@@ -64,6 +71,7 @@ exports.JoinCrew = async (ctx) => {
         resultCode: 0,
         msg: e,
       };
+      console.log(e);
     });
 };
 
