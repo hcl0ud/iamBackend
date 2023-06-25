@@ -58,21 +58,18 @@ exports.deleteBoard = async (ctx) => {
   const userInfo = await user.findOne({ userEmail: userIdx });
   const boardData = await board.findOne({ _id: _id });
 
-//
   if (
     boardData &&
     userInfo &&
     userInfo.userEmail === userIdx &&
     boardData._id.toString() === _id.toString()
   ) {
-    board
-      .deleteOne({ _id: _id })
-      .then(() => {
-        ctx.body = { status: 200, resultCode: 1, message: "게시물 삭제 완료" };
-      })
-      .catch((error) => {
-        ctx.body = { status: 200, resultCode: 0, error: error.message };
-      });
+    try {
+      await board.deleteOne({ _id: _id });  // 수정된 부분
+      ctx.body = { status: 200, resultCode: 1, message: "게시물 삭제 완료" };
+    } catch (error) {
+      ctx.body = { status: 200, resultCode: 0, error: error.message };
+    }
   } else {
     ctx.body = { status: 200, resultCode: 0, error: "게시물 삭제 오류" };
   }
