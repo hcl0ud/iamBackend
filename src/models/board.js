@@ -1,6 +1,7 @@
 const { db } = require("./index");
 const dayjs = require("dayjs");
 const { ObjectId } = require("mongodb");
+const querystring = require("querystring");
 
 const board = db.collection("board");
 const user = db.collection("user");
@@ -39,7 +40,7 @@ exports.writeBoard = async (ctx) => {
         userName: userInfo.userName,
         userEmail: userInfo.userEmail,
         profileImg: userInfo.profileImg,
-        likeCount: 0,
+        comments: [],
       })
       .then((ctx.body = { status: 200, resultCode: 1 }))
       .catch((e) => {
@@ -109,7 +110,7 @@ exports.deleteBoard = (ctx) => {
 exports.getCommentList = async (ctx) => {
   const _id = new ObjectId(ctx.query.id);
   if (_id) {
-    const boardData = await board.findOne({ _id: _id});
+    const boardData = await board.findOne({ _id: _id });
 
     if (boardData) {
       const comments = boardData.comments;
@@ -132,28 +133,26 @@ exports.writeComment = async (ctx) => {
   let time = now.format().slice(0, 19).split("T").join(" ");
 
   const { commentContents, userIdx, postId } = ctx.request.body;
+  const _id = await new ObjectId(postId.slice(4));
   const userInfo = await user.findOne({ userEmail: userIdx });
+  const boardData = await board.findOne({ _id: _id });
+
+  await boardData.comments.push({
+    writeTime: time,
+    commentContents: commentContents,
+    userName: userInfo.userName,
+    userEmail: userInfo.userEmail,
+  });
 
   await board
-    .updateOne(
-      { _id: postId },
-      {
-        comments: {
-          writeTime: time,
-          commentContents: commentContents,
-          userName: userInfo.userName,
-          userEmail: userInfo.userEmail,
-        },
-      }
-    )
-    .then((r) => {
+    .updateOne({ _id: _id }, { $set: boardData })
+    .then((e) => {
       ctx.body = { status: 200, resultCode: 1 };
     })
     .catch((e) => {
       ctx.body = {
         status: 200,
         resultCode: 0,
-        error: e,
         msg: "게시물을 찾을 수 없습니다.",
       };
     });
