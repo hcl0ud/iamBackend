@@ -52,20 +52,30 @@ exports.writeBoard = async (ctx) => {
 };
 
 exports.deleteBoard = async (ctx) => {
-  const _id = new ObjectId(ctx.query.id);
+  console.log(ctx.request.body);
+  const { userIdx, postId } = ctx.request.body;
+  const _id = await new ObjectId(postId.slice(4));
+  const userInfo = await user.findOne({ userEmail: userIdx });
+  const boardData = await board.findOne({ _id: _id });
 
-  board
-    .deleteOne({ _id: _id })
-    .then((deletedBoard) => {
-      if (deletedBoard) {
-        ctx.body = { status: 200, resultCode: 1, error: "게시물 삭제 완료" };
-      } else {
-        ctx.body = { status: 200, resultCode: 0, error: "게시물 삭제 오류" };
-      }
-    })
-    .catch((e) => {
-      ctx.body = { status: 200, resultCode: 0, error: e };
-    });
+//
+  if (
+    boardData &&
+    userInfo &&
+    userInfo.userEmail === userIdx &&
+    boardData._id.toString() === _id.toString()
+  ) {
+    board
+      .deleteOne({ _id: _id })
+      .then(() => {
+        ctx.body = { status: 200, resultCode: 1, message: "게시물 삭제 완료" };
+      })
+      .catch((error) => {
+        ctx.body = { status: 200, resultCode: 0, error: error.message };
+      });
+  } else {
+    ctx.body = { status: 200, resultCode: 0, error: "게시물 삭제 오류" };
+  }
 };
 
 exports.getBoardDetail = async (ctx) => {
