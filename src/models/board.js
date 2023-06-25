@@ -62,10 +62,11 @@ exports.deleteBoard = async (ctx) => {
     boardData &&
     userInfo &&
     userInfo.userEmail === userIdx &&
-    boardData._id.toString() === _id.toString()
+    boardData._id.toString() === _id.toString() &&
+    boardData.userEmail === userIdx
   ) {
     try {
-      await board.deleteOne({ _id: _id });  // 수정된 부분
+      await board.deleteOne({ _id: _id });  
       ctx.body = { status: 200, resultCode: 1, message: "게시물 삭제 완료" };
     } catch (error) {
       ctx.body = { status: 200, resultCode: 0, error: error.message };
