@@ -128,7 +128,31 @@ exports.getCommentList = async (ctx) => {
   }
 };
 
+exports.updateBoard = async (ctx) => {
+  const { boardTitle, boardContents, postId } = ctx.request.body;
+  const _id = await new ObjectId(postId.slice(4));
 
+  try {
+    const updatedBoard = await board.findOneAndUpdate(
+      { _id: _id },
+      {
+        $set: {
+          boardTitle: boardTitle,
+          boardContents: boardContents,
+        },
+      },
+      { returnOriginal: false }
+    );
+
+    if (updatedBoard) {
+      ctx.body = { status: 200, resultCode: 1 };
+    } else {
+      ctx.body = { status: 200, resultCode: 0, error: "게시물을 찾을 수 없습니다." };
+    }
+  } catch (error) {
+    ctx.body = { status: 200, resultCode: 0, error: error.message };
+  }
+};
 
 exports.writeComment = async (ctx) => {
   let now = dayjs();
@@ -161,60 +185,25 @@ exports.writeComment = async (ctx) => {
 };
 
 exports.deleteComment = async (ctx) => {
-  const _id = new ObjectId(ctx.query.id);
-
-  const boardData = await board.findOne({ _id: _id });
-
-  if (boardData) {
-    const deletionResult = await boardData.comments.deleteOne({
-      commentContents: commentContents,
-    });
-
-    if (deletionResult !== null && deletionResult !== undefined) {
-      ctx.body = {
-        status: 200,
-        resultCode: 1,
-        message: "댓글을 삭제하였습니다.",
-      };
-    } else {
-      ctx.body = {
-        status: 200,
-        resultCode: 0,
-        error: "댓글을 찾을 수 없습니다.",
-      };
-    }
-  } else {
-    ctx.body = {
-      status: 200,
-      resultCode: 0,
-      error: "게시물을 찾을 수 없습니다.",
-    };
-  }
-};
-
-exports.updateBoard = async (ctx) => {
-  const { boardTitle, boardContents, postId } = ctx.request.body;
+  console.log(ctx.request.body);
+  const { userIdx, postId } = ctx.request.body;
   const _id = await new ObjectId(postId.slice(4));
-
-  try {
-    const updatedBoard = await board.findOneAndUpdate(
-      { _id: _id },
-      {
-        $set: {
-          boardTitle: boardTitle,
-          boardContents: boardContents,
-        },
-      },
-      { returnOriginal: false }
+  const userInfo = await user.findOne({ userEmail: userIdx });
+  
+  if (userInfo) {
+    const result = await board.findOneAndUpdate(
+      { _id: _id, "comments.userEmail": userIdx },
+      { $pull: { comments: { userEmail: userIdx } } },
+      { new: true }
     );
 
-    if (updatedBoard) {
-      ctx.body = { status: 200, resultCode: 1 };
+    if (result) {
+      ctx.body = { status: 200, resultCode: 1, message: "댓글 삭제 완료" };
     } else {
-      ctx.body = { status: 200, resultCode: 0, error: "게시물을 찾을 수 없습니다." };
+      ctx.body = { status: 200, resultCode: 0, error: "삭제 권한이 없습니다." };
     }
-  } catch (error) {
-    ctx.body = { status: 200, resultCode: 0, error: error.message };
+  } else {
+    ctx.body = { status: 200, resultCode: 0, error: "사용자 정보를 찾을 수 없습니다." };
   }
 };
 
