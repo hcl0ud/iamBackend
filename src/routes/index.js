@@ -30,6 +30,10 @@ router
 
 // crew
 router
+  .get("crew/getcrewBoardDetail", crew.getcrewBoardDetail)
+  .get("crew/deletecrewBoard", crew.deletecrewBoard)
+  .get("crew/getcrewBoardList", crew.getcrewBoardList)
+  .post("crew/writecrewBoard", crew.writecrewBoard)
   .post("crew/createCrew", crew.createCrew)
   .post("crew/JoinCrew", crew.JoinCrew)
   .post("crew/getCrewList", crew.getCrewList);
