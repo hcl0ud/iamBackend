@@ -164,7 +164,7 @@ exports.deletecrewBoard = (ctx) => {
 exports.getcrewBoardDetail = async (ctx) => {
   const _id = new ObjectId(ctx.query.id);
 
-  await board
+  await crewboard
     .findOne({ _id: _id })
     .then((boardData) => {
       ctx.body = {
