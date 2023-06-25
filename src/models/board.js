@@ -1,6 +1,7 @@
 const { db } = require("./index");
 const dayjs = require("dayjs");
 const { ObjectId } = require("mongodb");
+const querystring = require("querystring");
 
 const board = db.collection("board");
 const user = db.collection("user");
@@ -39,7 +40,7 @@ exports.writeBoard = async (ctx) => {
         userName: userInfo.userName,
         userEmail: userInfo.userEmail,
         profileImg: userInfo.profileImg,
-        likeCount: 0,
+        comments: [],
       })
       .then((ctx.body = { status: 200, resultCode: 1 }))
       .catch((e) => {
@@ -50,7 +51,7 @@ exports.writeBoard = async (ctx) => {
   }
 };
 
-exports.deleteBoard = (ctx) => {
+exports.deleteBoard = async (ctx) => {
   const _id = new ObjectId(ctx.query.id);
 
   board
@@ -89,16 +90,19 @@ exports.getBoardDetail = async (ctx) => {
     });
 };
 
-
 exports.getCommentList = async (ctx) => {
   const _id = new ObjectId(ctx.query.id);
-  if (_id) {
-    const boardData = await board.findOne({ _id: _id});
+
+  try {
+    const boardData = await board.findOne({ _id: _id });
 
     if (boardData) {
-      const comments = boardData.comments;
-
-      ctx.body = { status: 200, resultCode: 1, comments };
+      const commentData = await boardData.comments;
+      ctx.body = {
+        status: 200,
+        resultCode: 1,
+        data: commentData,
+      };
     } else {
       ctx.body = {
         status: 200,
@@ -106,53 +110,56 @@ exports.getCommentList = async (ctx) => {
         error: "게시물을 찾을 수 없습니다.",
       };
     }
-  } else {
-    ctx.body = { status: 200, resultCode: 0, error: "postId를 지정해주세요." };
+  } catch (error) {
+    ctx.body = {
+      status: 200,
+      resultCode: 0,
+      error: "게시물 상세 정보를 가져오는 중에 오류가 발생했습니다.",
+      message: error.message,
+    };
   }
 };
+
+
 
 exports.writeComment = async (ctx) => {
   let now = dayjs();
   let time = now.format().slice(0, 19).split("T").join(" ");
-  console.log(ctx.request.body);
-  if (ctx.request.body) {
-    const { commentContents, userIdx, postId } = ctx.request.body;
-    const userInfo = await user.findOne({ userEmail: userIdx });
-    const boardData = await board.findOne({ _id : new ObjectId(postId)});
-    console.log(boardData);
 
-    if (boardData) {
-      const newComment = {
-        writeTime: time,
-        commentContents: commentContents,
-        userName: userInfo.userName,
-        userEmail: userInfo.userEmail,
-        likeCount: 0,
-      };
+  const { commentContents, userIdx, postId } = ctx.request.body;
+  const _id = await new ObjectId(postId.slice(4));
+  const userInfo = await user.findOne({ userEmail: userIdx });
+  const boardData = await board.findOne({ _id: _id });
 
-      await boardData.comments.insertOne(newComment);
+  boardData.comments.push({
+    writeTime: time,
+    commentContents: commentContents,
+    userName: userInfo.userName,
+    userEmail: userInfo.userEmail,
+  });
 
+  await board
+    .updateOne({ _id: _id }, { $set: boardData })
+    .then((e) => {
       ctx.body = { status: 200, resultCode: 1 };
-    } else {
+    })
+    .catch((e) => {
       ctx.body = {
         status: 200,
         resultCode: 0,
-        error: "댓글을 찾을 수 없습니다.",
+        msg: "댓글을 찾을 수 없습니다.",
       };
-    }
-  } else {
-    ctx.body = { status: 200, resultCode: 0, error: "include null data" };
-  }
+    });
 };
 
 exports.deleteComment = async (ctx) => {
-  const { commentId, postId } = ctx.query;
+  const _id = new ObjectId(ctx.query.id);
 
-  const boardData = await board.findOne({ _id: postId });
+  const boardData = await board.findOne({ _id: _id });
 
   if (boardData) {
     const deletionResult = await boardData.comments.deleteOne({
-      _id: commentId,
+      commentContents: commentContents,
     });
 
     if (deletionResult !== null && deletionResult !== undefined) {
@@ -174,6 +181,32 @@ exports.deleteComment = async (ctx) => {
       resultCode: 0,
       error: "게시물을 찾을 수 없습니다.",
     };
+  }
+};
+
+exports.updateBoard = async (ctx) => {
+  const { boardTitle, boardContents, postId } = ctx.request.body;
+  const _id = await new ObjectId(postId.slice(4));
+
+  try {
+    const updatedBoard = await board.findOneAndUpdate(
+      { _id: _id },
+      {
+        $set: {
+          boardTitle: boardTitle,
+          boardContents: boardContents,
+        },
+      },
+      { returnOriginal: false }
+    );
+
+    if (updatedBoard) {
+      ctx.body = { status: 200, resultCode: 1 };
+    } else {
+      ctx.body = { status: 200, resultCode: 0, error: "게시물을 찾을 수 없습니다." };
+    }
+  } catch (error) {
+    ctx.body = { status: 200, resultCode: 0, error: error.message };
   }
 };
 
