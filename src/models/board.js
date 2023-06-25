@@ -89,6 +89,22 @@ exports.getBoardDetail = async (ctx) => {
     });
 };
 
+exports.deleteBoard = (ctx) => {
+  const { postId } = ctx.query;
+
+  board
+    .deleteOne({ _id: postId })
+    .then((deletedBoard) => {
+      if (deletedBoard) {
+        ctx.response.redirect("/index.html");
+      } else {
+        ctx.body = { status: 200, resultCode: 0, error: "게시물 삭제 오류" };
+      }
+    })
+    .catch((e) => {
+      ctx.body = { status: 200, resultCode: 0, error: e };
+    });
+};
 
 exports.getCommentList = async (ctx) => {
   const _id = new ObjectId(ctx.query.id);
@@ -114,35 +130,33 @@ exports.getCommentList = async (ctx) => {
 exports.writeComment = async (ctx) => {
   let now = dayjs();
   let time = now.format().slice(0, 19).split("T").join(" ");
-  console.log(ctx.request.body);
-  if (ctx.request.body) {
-    const { commentContents, userIdx, postId } = ctx.request.body;
-    const userInfo = await user.findOne({ userEmail: userIdx });
-    const boardData = await board.findOne({ _id : new ObjectId(postId)});
-    console.log(boardData);
 
-    if (boardData) {
-      const newComment = {
-        writeTime: time,
-        commentContents: commentContents,
-        userName: userInfo.userName,
-        userEmail: userInfo.userEmail,
-        likeCount: 0,
-      };
+  const { commentContents, userIdx, postId } = ctx.request.body;
+  const userInfo = await user.findOne({ userEmail: userIdx });
 
-      await boardData.comments.insertOne(newComment);
-
+  await board
+    .updateOne(
+      { _id: postId },
+      {
+        comments: {
+          writeTime: time,
+          commentContents: commentContents,
+          userName: userInfo.userName,
+          userEmail: userInfo.userEmail,
+        },
+      }
+    )
+    .then((r) => {
       ctx.body = { status: 200, resultCode: 1 };
-    } else {
+    })
+    .catch((e) => {
       ctx.body = {
         status: 200,
         resultCode: 0,
-        error: "댓글을 찾을 수 없습니다.",
+        error: e,
+        msg: "게시물을 찾을 수 없습니다.",
       };
-    }
-  } else {
-    ctx.body = { status: 200, resultCode: 0, error: "include null data" };
-  }
+    });
 };
 
 exports.deleteComment = async (ctx) => {
