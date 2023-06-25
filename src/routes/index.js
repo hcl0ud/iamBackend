@@ -20,9 +20,9 @@ router
 // BOARD
 router
   .get("board/getBoardDetail", board.getBoardDetail)
-  .get("board/deleteBoard", board.deleteBoard)
   .get("board/getCommentList", board.getCommentList)
   .get("board/deleteComment", board.deleteComment)
+  .post("board/deleteBoard", board.deleteBoard)
   .post("board/getBoardList", board.getBoardList)
   .post("board/writeBoard", board.writeBoard)
   .post("board/writeComment", board.writeComment)
