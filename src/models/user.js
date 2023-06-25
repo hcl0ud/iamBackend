@@ -51,9 +51,10 @@ exports.getUserInfo = async (ctx) => {
   const { userIdx } = ctx.request.body;
 
   if (userIdx) {
-    let { userEmail, userName, userIntro, profileImg } = await user.findOne({
-      userEmail: userIdx,
-    });
+    let { userEmail, userName, userIntro, profileImg, userPassword } =
+      await user.findOne({
+        userEmail: userIdx,
+      });
 
     if (profileImg) {
       ctx.body = {
@@ -62,6 +63,7 @@ exports.getUserInfo = async (ctx) => {
         data: {
           userEmail: userEmail,
           userName: userName,
+          userPassword: userPassword,
           userIntro: userIntro,
           profileImg: profileImg,
         },
@@ -73,6 +75,7 @@ exports.getUserInfo = async (ctx) => {
         data: {
           userEmail: userEmail,
           userName: userName,
+          userPassword: userPassword,
           userIntro: userIntro,
         },
       };
@@ -86,34 +89,29 @@ exports.getUserInfo = async (ctx) => {
 };
 
 exports.updateProfile = async (ctx) => {
-  const { userIdx, userIntro } = ctx.request.body;
+  console.log(ctx.request.body);
+  const { userEmail, userName, userIntro, userPassword, profileImg } =
+    ctx.request.body;
 
-  try {
-    const result = await user.updateOne(
-      { userEmail: userIdx },
-      { $set: { userIntro } }
-    );
-
-    if (result.modifiedCount > 0) {
-      ctx.body = {
-        status: 200,
-        resultCode: 1,
-        message: "소개말을 적었습니다.",
-      };
-    } else {
-      ctx.body = {
-        status: 200,
-        resultCode: 0,
-        message: "업데이트 실패!",
-      };
-    }
-  } catch (error) {
-    ctx.body = {
-      status: 200,
-      resultCode: 0,
-      error: "서버 오류",
-    };
-  }
+  await user
+    .updateOne(
+      { userEmail: userEmail },
+      {
+        $set: {
+          userEmail: userEmail,
+          userName: userName,
+          userIntro: userIntro,
+          userPassword: userPassword,
+          profileImg: profileImg,
+        },
+      }
+    )
+    .then((r) => {
+      ctx.body = { status: 200, resultCode: 1 };
+    })
+    .catch((e) => {
+      ctx.body = { status: 200, resultCode: 0, err: e };
+    });
 };
 
 exports.uploadProfilePicture = async (ctx) => {
