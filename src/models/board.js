@@ -200,8 +200,9 @@ exports.deleteComment = async (ctx) => {
 
 exports.search = async (ctx) => {
   const { searchQuery } = ctx.request.body;
+  await board.createIndex({ boardTitle: "text", boardContents: "text" });
   await board
-    .find({ $text: { $search: searchQuery } })
+    .find({ $text: { $search: searchQuery.toString() } })
     .toArray()
     .then((r) => {
       ctx.body = {
