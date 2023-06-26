@@ -5,6 +5,7 @@ const router = new Router({ prefix: "/" });
 const user = require("../models/user");
 const board = require("../models/board");
 const crew = require("../models/crew");
+
 // File Sever
 const { upload } = require("../module/multer");
 
@@ -18,9 +19,11 @@ router
   .post("user/uploadProfile", upload.single("file"), user.uploadProfilePicture);
 
 // BOARD
-router
+router 
   .get("board/getBoardDetail", board.getBoardDetail)
   .get("board/getCommentList", board.getCommentList)
+  .post("board/updateBoard", board.updateBoard)
+  .post("board/goToUpdateEdit", board.goToUpdateEdit)
   .post("board/deleteComment", board.deleteComment)
   .post("board/deleteBoard", board.deleteBoard)
   .post("board/getBoardList", board.getBoardList)
