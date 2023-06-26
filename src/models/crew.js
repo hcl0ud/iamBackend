@@ -123,7 +123,7 @@ exports.writecrewBoard = async (ctx) => {
   if (ctx.request.body) {
     const { crewTitle, crewContents, crewName, userEmail } = ctx.request.body;
     const crewInfo = await crew.findOne({ crewName: crewName });
-    const userInfo = await user.findOne({ userEmail: userEmail })
+    const userInfo = await user.findOne({ userEmail: userEmail });
 
     await crewboard
       .insertOne({
@@ -162,15 +162,15 @@ exports.deletecrewBoard = (ctx) => {
 };
 
 exports.getcrewBoardDetail = async (ctx) => {
-  const _id = new ObjectId(ctx.query.id);
+  const crewName = new ObjectId(ctx.query.crewName);
 
   await crewboard
-    .findOne({ _id: _id })
-    .then((boardData) => {
+    .findOne({ crewName: crewName })
+    .then((crewboardData) => {
       ctx.body = {
         status: 200,
         resultCode: 1,
-        data: boardData,
+        data: crewboardData,
       };
     })
     .catch((error) => {
@@ -183,4 +183,26 @@ exports.getcrewBoardDetail = async (ctx) => {
     });
 };
 
-// 크루 정보 + 해당크루 게시글 불러오기
+// 특정 크루 게시물 불러오기
+
+exports.getcrewBoarde = async (ctx) => {
+  const crewName = ctx.query.crewName;
+
+  crewboard
+    .find({ crewName: crewName })
+    .then((crewboardData) => {
+      ctx.body = {
+        status: 200,
+        resultCode: 1,
+        data: crewboardData,
+      };
+    })
+    .catch((e) => {
+      ctx.body = {
+        status: 200,
+        resultCode: 0,
+        error: "게시물을 가져오는 중에 오류가 발생했습니다.",
+        msg: e.msg,
+      };
+    });
+};
