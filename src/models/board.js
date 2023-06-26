@@ -75,10 +75,18 @@ exports.goToUpdateEdit = async (ctx) => {
     boardData._id.toString() === _id.toString() &&
     boardData.userEmail === userIdx
   ) {
-      ctx.body = { status: 200, resultCode: 1, message: "게시물 수정페이지 접근 완료" };
-    } else {
-      ctx.body = { status: 200, resultCode: 0, error: "게시물 수정페이지 접근 오류" };
-    }
+    ctx.body = {
+      status: 200,
+      resultCode: 1,
+      message: "게시물 수정페이지 접근 완료",
+    };
+  } else {
+    ctx.body = {
+      status: 200,
+      resultCode: 0,
+      error: "게시물 수정페이지 접근 오류",
+    };
+  }
 };
 
 exports.getBoardDetail = async (ctx) => {
@@ -165,6 +173,7 @@ exports.writeComment = async (ctx) => {
     commentContents: commentContents,
     userName: userInfo.userName,
     userEmail: userInfo.userEmail,
+    profileImg: userInfo.profileImg,
   });
 
   await board
@@ -179,8 +188,6 @@ exports.writeComment = async (ctx) => {
       };
     });
 };
-
-
 
 exports.deleteComment = async (ctx) => {
   const { userIdx, postId } = ctx.request.body;
