@@ -54,6 +54,20 @@ exports.joinCrew = async (ctx) => {
   const userInfo = await user.findOne({ userEmail: userIdx });
   const crewData = await crew.findOne({ _id: _id });
 
+  // 사용자의 이메일이 이미 크루 멤버 목록에 있는지 확인
+  const sameMember = crewData.crewMember.some(
+    (member) => member.userEmail === userInfo.userEmail
+  );
+
+  if (sameMember) {
+    ctx.body = {
+      status: 200,
+      resultCode: 0,
+      error: "이미 크루에 가입된 사용자입니다.",
+    };
+    return;
+  }
+
   crewData.crewMember.push({
     userEmail: userInfo.userEmail,
     userName: userInfo.userName,
@@ -71,7 +85,7 @@ exports.joinCrew = async (ctx) => {
       ctx.body = {
         status: 200,
         resultCode: 0,
-        msg: e,
+        error: e,
       };
       console.log(e);
     });
@@ -123,9 +137,9 @@ exports.writeCrewBoard = async (ctx) => {
   let time = now.format().slice(0, 19).split("T").join(" ");
 
   if (ctx.request.body) {
-    const { crewTitle, crewContents, crewName, userEmail } = ctx.request.body;
+    const { crewTitle, crewContents, crewName, userIdx } = ctx.request.body;
     const crewInfo = await crew.findOne({ crewName: crewName });
-    const userInfo = await user.findOne({ userEmail: userEmail });
+    const userInfo = await user.findOne({ userEmail: userIdx });
 
     await crewBoard
       .insertOne({
@@ -186,7 +200,7 @@ exports.getCrewBoardDetail = async (ctx) => {
 };
 
 // 특정 크루 게시물 불러오기
-exports.getCrewBoard = async (ctx) => {
+exports.getCrewBoards = async (ctx) => {
   const crewName = ctx.query.crewName;
 
   const data = await crewBoard.find({ crewName: crewName });
