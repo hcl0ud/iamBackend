@@ -1,7 +1,9 @@
 const { db } = require(".");
 const { ObjectId } = require("mongodb");
+const dayjs = require("dayjs");
 const user = db.collection("user");
 const crew = db.collection("crew");
+const crewBoard = db.collection("crewBoard");
 
 // 크루생성
 exports.createCrew = async (ctx) => {
@@ -46,7 +48,7 @@ exports.createCrew = async (ctx) => {
 };
 
 // 크루 가입
-exports.JoinCrew = async (ctx) => {
+exports.joinCrew = async (ctx) => {
   const { userIdx, crewIdx } = ctx.request.body;
   const _id = new ObjectId(crewIdx);
   const userInfo = await user.findOne({ userEmail: userIdx });
@@ -98,8 +100,8 @@ exports.getCrewList = async (ctx) => {
 
 // 크루 글쓰기
 
-exports.getcrewBoardList = async (ctx) => {
-  const data = await crewboard.find({}, {}).toArray();
+exports.getCrewBoardList = async (ctx) => {
+  const data = await crewBoard.find({}, {}).toArray();
   try {
     ctx.body = {
       status: 200,
@@ -116,7 +118,7 @@ exports.getcrewBoardList = async (ctx) => {
   }
 };
 
-exports.writecrewBoard = async (ctx) => {
+exports.writeCrewBoard = async (ctx) => {
   let now = dayjs();
   let time = now.format().slice(0, 19).split("T").join(" ");
 
@@ -125,7 +127,7 @@ exports.writecrewBoard = async (ctx) => {
     const crewInfo = await crew.findOne({ crewName: crewName });
     const userInfo = await user.findOne({ userEmail: userEmail });
 
-    await crewboard
+    await crewBoard
       .insertOne({
         writeTime: time,
         crewTitle: crewTitle,
@@ -144,10 +146,10 @@ exports.writecrewBoard = async (ctx) => {
   }
 };
 
-exports.deletecrewBoard = (ctx) => {
+exports.deleteCrewBoard = async (ctx) => {
   const _id = new ObjectId(ctx.query.id);
 
-  crewboard
+  await crewBoard
     .deleteOne({ _id: _id })
     .then((deletedBoard) => {
       if (deletedBoard) {
@@ -161,16 +163,16 @@ exports.deletecrewBoard = (ctx) => {
     });
 };
 
-exports.getcrewBoardDetail = async (ctx) => {
+exports.getCrewBoardDetail = async (ctx) => {
   const crewName = new ObjectId(ctx.query.crewName);
 
-  await crewboard
+  await crewBoard
     .findOne({ crewName: crewName })
-    .then((crewboardData) => {
+    .then((crewBoardData) => {
       ctx.body = {
         status: 200,
         resultCode: 1,
-        data: crewboardData,
+        data: crewBoardData,
       };
     })
     .catch((error) => {
@@ -184,25 +186,22 @@ exports.getcrewBoardDetail = async (ctx) => {
 };
 
 // 특정 크루 게시물 불러오기
-
-exports.getcrewBoarde = async (ctx) => {
+exports.getCrewBoard = async (ctx) => {
   const crewName = ctx.query.crewName;
 
-  crewboard
-    .find({ crewName: crewName })
-    .then((crewboardData) => {
-      ctx.body = {
-        status: 200,
-        resultCode: 1,
-        data: crewboardData,
-      };
-    })
-    .catch((e) => {
-      ctx.body = {
-        status: 200,
-        resultCode: 0,
-        error: "게시물을 가져오는 중에 오류가 발생했습니다.",
-        msg: e.msg,
-      };
-    });
+  const data = await crewBoard.find({ crewName: crewName });
+
+  if (data) {
+    ctx.body = {
+      status: 200,
+      resultCode: 1,
+      data: data,
+    };
+  } else {
+    ctx.body = {
+      status: 200,
+      resultCode: 0,
+      error: "게시물을 가져오는 중에 오류가 발생했습니다.",
+    };
+  }
 };

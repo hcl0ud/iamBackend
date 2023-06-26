@@ -30,13 +30,13 @@ router
 
 // crew
 router
-  .get("crew/getcrewBoardDetail", crew.getcrewBoardDetail)
-  .get("crew/deletecrewBoard", crew.deletecrewBoard)
-  .get("crew/getcrewBoardList", crew.getcrewBoardList)
-  .get("crew/getcrewBoarde", crew.getcrewBoarde)
-  .post("crew/writecrewBoard", crew.writecrewBoard)
+  .get("crew/getCrewBoardDetail", crew.getCrewBoardDetail)
+  .get("crew/deleteCrewBoard", crew.deleteCrewBoard)
+  .get("crew/getCrewBoardList", crew.getCrewBoardList)
+  .get("crew/getCrewBoard", crew.getCrewBoard)
+  .post("crew/writeCrewBoard", crew.writeCrewBoard)
   .post("crew/createCrew", crew.createCrew)
-  .post("crew/JoinCrew", crew.JoinCrew)
+  .post("crew/JoinCrew", crew.joinCrew)
   .post("crew/getCrewList", crew.getCrewList);
 
 module.exports = router;
