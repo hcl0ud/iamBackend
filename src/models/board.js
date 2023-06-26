@@ -61,6 +61,26 @@ exports.deleteBoard = async (ctx) => {
     });
 };
 
+exports.goToUpdateEdit = async (ctx) => {
+  console.log(ctx.request.body);
+  const { userIdx, postId } = ctx.request.body;
+  const _id = await new ObjectId(postId.slice(4));
+  const userInfo = await user.findOne({ userEmail: userIdx });
+  const boardData = await board.findOne({ _id: _id });
+
+  if (
+    boardData &&
+    userInfo &&
+    userInfo.userEmail === userIdx &&
+    boardData._id.toString() === _id.toString() &&
+    boardData.userEmail === userIdx
+  ) {
+      ctx.body = { status: 200, resultCode: 1, message: "게시물 수정페이지 접근 완료" };
+    } else {
+      ctx.body = { status: 200, resultCode: 0, error: "게시물 수정페이지 접근 오류" };
+    }
+};
+
 exports.getBoardDetail = async (ctx) => {
   const _id = new ObjectId(ctx.query.id);
 
@@ -107,7 +127,7 @@ exports.getCommentList = async (ctx) => {
 
 exports.updateBoard = async (ctx) => {
   const { boardTitle, boardContents, postId } = ctx.request.body;
-  const _id = await new ObjectId(postId.slice(4));
+  const _id = await new ObjectId(postId.slice(8));
 
   await board
     .findOneAndUpdate(
@@ -159,6 +179,8 @@ exports.writeComment = async (ctx) => {
       };
     });
 };
+
+
 
 exports.deleteComment = async (ctx) => {
   const { userIdx, postId } = ctx.request.body;
