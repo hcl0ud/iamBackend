@@ -116,6 +116,7 @@ exports.getCrewList = async (ctx) => {
 
 exports.getCrewBoardList = async (ctx) => {
   const data = await crewBoard.find({}, {}).toArray();
+  const _id = new ObjectId(ctx.query.id);
   try {
     ctx.body = {
       status: 200,
