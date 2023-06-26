@@ -36,7 +36,7 @@ router
   .get("crew/getCrewBoard", crew.getCrewBoard)
   .post("crew/writeCrewBoard", crew.writeCrewBoard)
   .post("crew/createCrew", crew.createCrew)
-  .post("crew/JoinCrew", crew.joinCrew)
+  .post("crew/joinCrew", crew.joinCrew)
   .post("crew/getCrewList", crew.getCrewList);
 
 module.exports = router;
