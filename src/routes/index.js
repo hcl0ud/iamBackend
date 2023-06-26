@@ -33,6 +33,7 @@ router
   .get("crew/getcrewBoardDetail", crew.getcrewBoardDetail)
   .get("crew/deletecrewBoard", crew.deletecrewBoard)
   .get("crew/getcrewBoardList", crew.getcrewBoardList)
+  .get("crew/getcrewBoarde", crew.getcrewBoarde)
   .post("crew/writecrewBoard", crew.writecrewBoard)
   .post("crew/createCrew", crew.createCrew)
   .post("crew/JoinCrew", crew.JoinCrew)
