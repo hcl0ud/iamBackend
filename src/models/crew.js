@@ -30,9 +30,7 @@ exports.createCrew = async (ctx) => {
             },
           ],
         })
-        .then((r) => {
-          ctx.body = { status: 200, resultCode: 1 };
-        })
+        .then((ctx.body = { status: 200, resultCode: 1 }))
         .catch((e) => {
           ctx.body = { status: 200, resultCode: 0, msg: e };
         })

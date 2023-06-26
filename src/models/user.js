@@ -9,17 +9,20 @@ const board = db.collection("board");
 exports.register = async (ctx) => {
   const { userEmail, userName, userPassword } = ctx.request.body;
 
-  if (await user.findOne({ userEmail: userEmail }))
-    ctx.body = { status: 200, resultCode: 0 };
-  else {
-    await user.insertOne({
-      userEmail: userEmail,
-      userName: userName,
-      userPassword: userPassword,
-      userIntro: "",
+  await user
+    .findOne({ userEmail: userEmail })
+    .then((r) => {
+      user.insertOne({
+        userEmail: userEmail,
+        userName: userName,
+        userPassword: userPassword,
+        userIntro: "",
+      });
+      ctx.body = { status: 200, resultCode: 1 };
+    })
+    .catch((e) => {
+      ctx.body = { status: 200, resultCode: 0, err: e };
     });
-    ctx.body = { status: 200, resultCode: 1 };
-  }
 };
 
 exports.login = async (ctx) => {
@@ -28,13 +31,12 @@ exports.login = async (ctx) => {
   await user
     .findOne({ userEmail: userEmail, userPassword: userPassword })
     .then(async (r) => {
-      const token = await jwt.sign(r.userEmail);
       ctx.body = {
         status: 200,
         resultCode: 1,
         data: {
           userIdx: r.userEmail,
-          token: token.token,
+          token: await jwt.sign(r.userEmail).token,
         },
       };
     })
@@ -42,7 +44,7 @@ exports.login = async (ctx) => {
       ctx.body = {
         status: 200,
         resultCode: 0,
-        msg: e,
+        err: e,
       };
     });
 };
@@ -50,46 +52,27 @@ exports.login = async (ctx) => {
 exports.getUserInfo = async (ctx) => {
   const { userIdx } = ctx.request.body;
 
-  if (userIdx) {
-    let { userEmail, userName, userIntro, profileImg, userPassword } =
-      await user.findOne({
-        userEmail: userIdx,
-      });
-
-    if (profileImg) {
+  await user
+    .findOne({
+      userEmail: userIdx,
+    })
+    .then((r) => {
       ctx.body = {
         status: 200,
         resultCode: 1,
-        data: {
-          userEmail: userEmail,
-          userName: userName,
-          userPassword: userPassword,
-          userIntro: userIntro,
-          profileImg: profileImg,
-        },
+        data: r,
       };
-    } else {
+    })
+    .catch((e) => {
       ctx.body = {
         status: 200,
-        resultCode: 1,
-        data: {
-          userEmail: userEmail,
-          userName: userName,
-          userPassword: userPassword,
-          userIntro: userIntro,
-        },
+        resultCode: 0,
+        err: e,
       };
-    }
-  } else {
-    ctx.body = {
-      status: 200,
-      resultCode: 0,
-    };
-  }
+    });
 };
 
 exports.updateProfile = async (ctx) => {
-  console.log(ctx.request.body);
   const { userEmail, userName, userIntro, userPassword, profileImg } =
     ctx.request.body;
 
@@ -106,9 +89,7 @@ exports.updateProfile = async (ctx) => {
         },
       }
     )
-    .then((r) => {
-      ctx.body = { status: 200, resultCode: 1 };
-    })
+    .then((ctx.body = { status: 200, resultCode: 1 }))
     .catch((e) => {
       ctx.body = { status: 200, resultCode: 0, err: e };
     });
@@ -116,12 +97,11 @@ exports.updateProfile = async (ctx) => {
 
 exports.uploadProfilePicture = async (ctx) => {
   const { userIdx } = ctx.request.body;
-  const file = ctx.request.file;
 
-  if (file) {
+  if (ctx.request.file) {
     await user.updateOne(
       { userEmail: userIdx },
-      { $set: { profileImg: file.path } }
+      { $set: { profileImg: ctx.request.file.path } }
     );
     ctx.body = {
       status: 200,
@@ -139,18 +119,23 @@ exports.uploadProfilePicture = async (ctx) => {
 
 exports.getBoardList = async (ctx) => {
   const { userIdx } = ctx.request.body;
-  const data = await board.find({ userEmail: userIdx }, {}).toArray();
-  try {
-    ctx.body = {
-      status: 200,
-      resultCode: 1,
-      data: data.reverse(),
-    };
-  } catch (error) {
-    ctx.body = {
-      status: 500,
-      resultCode: 0,
-      err: "데이터 조회 실패",
-    };
-  }
+
+  await board
+    .find({ userEmail: userIdx }, {})
+    .toArray()
+    .then((r) => {
+      ctx.body = {
+        status: 200,
+        resultCode: 1,
+        data: r.reverse(),
+      };
+    })
+    .catch((e) => {
+      ctx.body = {
+        status: 200,
+        resultCode: 0,
+        msg: "데이터 조회 실패",
+        err: e,
+      };
+    });
 };

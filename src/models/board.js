@@ -1,79 +1,64 @@
 const { db } = require("./index");
 const dayjs = require("dayjs");
 const { ObjectId } = require("mongodb");
-const querystring = require("querystring");
 
 const board = db.collection("board");
 const user = db.collection("user");
 
 exports.getBoardList = async (ctx) => {
-  const data = await board.find({}, {}).toArray();
-  try {
-    ctx.body = {
-      status: 200,
-      resultCode: 1,
-      data: data.reverse(),
-    };
-  } catch (e) {
-    ctx.body = {
-      status: 200,
-      resultCode: 0,
-      error: "데이터 조회 실패",
-      msg: e,
-    };
-  }
+  await board
+    .find({}, {})
+    .toArray()
+    .then((r) => {
+      ctx.body = {
+        status: 200,
+        resultCode: 1,
+        data: r.reverse(),
+      };
+    })
+    .catch((e) => {
+      ctx.body = {
+        status: 200,
+        resultCode: 0,
+        msg: "데이터 조회 실패",
+        err: e,
+      };
+    });
 };
 
 exports.writeBoard = async (ctx) => {
   let now = dayjs();
   let time = now.format().slice(0, 19).split("T").join(" ");
 
-  if (ctx.request.body) {
-    const { boardTitle, boardContents, userIdx } = ctx.request.body;
-    const userInfo = await user.findOne({ userEmail: userIdx });
+  const { boardTitle, boardContents, userIdx } = ctx.request.body;
+  const userInfo = await user.findOne({ userEmail: userIdx });
 
-    await board
-      .insertOne({
-        writeTime: time,
-        boardTitle: boardTitle,
-        boardContents: boardContents,
-        userName: userInfo.userName,
-        userEmail: userInfo.userEmail,
-        profileImg: userInfo.profileImg,
-        comments: [],
-      })
-      .then((ctx.body = { status: 200, resultCode: 1 }))
-      .catch((e) => {
-        ctx.body = { status: 200, resultCode: 0, error: e };
-      });
-  } else {
-    ctx.body = { status: 200, resultCode: 0, error: "include null data" };
-  }
+  await board
+    .insertOne({
+      writeTime: time,
+      boardTitle: boardTitle,
+      boardContents: boardContents,
+      userName: userInfo.userName,
+      userEmail: userInfo.userEmail,
+      profileImg: userInfo.profileImg,
+      comments: [],
+    })
+    .then((ctx.body = { status: 200, resultCode: 1 }))
+    .catch((e) => {
+      ctx.body = { status: 200, resultCode: 0, error: e };
+    });
 };
 
 exports.deleteBoard = async (ctx) => {
-  console.log(ctx.request.body);
-  const { userIdx, postId } = ctx.request.body;
+  const { postId } = ctx.request.body;
   const _id = await new ObjectId(postId.slice(4));
-  const userInfo = await user.findOne({ userEmail: userIdx });
-  const boardData = await board.findOne({ _id: _id });
 
-  if (
-    boardData &&
-    userInfo &&
-    userInfo.userEmail === userIdx &&
-    boardData._id.toString() === _id.toString() &&
-    boardData.userEmail === userIdx
-  ) {
-    try {
-      await board.deleteOne({ _id: _id });  
-      ctx.body = { status: 200, resultCode: 1, message: "게시물 삭제 완료" };
-    } catch (error) {
-      ctx.body = { status: 200, resultCode: 0, error: error.message };
-    }
-  } else {
-    ctx.body = { status: 200, resultCode: 0, error: "게시물 삭제 오류" };
-  }
+  await board
+    .deleteOne({ _id: _id })
+    .then((ctx.body = { status: 200, resultCode: 1 }))
+    .catch((e) => {
+      ctx.body = { status: 200, resultCode: 0, err: e };
+    });
 };
 
 exports.getBoardDetail = async (ctx) => {
@@ -81,19 +66,19 @@ exports.getBoardDetail = async (ctx) => {
 
   await board
     .findOne({ _id: _id })
-    .then((boardData) => {
+    .then((r) => {
       ctx.body = {
         status: 200,
         resultCode: 1,
-        data: boardData,
+        data: r,
       };
     })
-    .catch((error) => {
+    .catch((e) => {
       ctx.body = {
         status: 200,
         resultCode: 0,
-        error: "게시물 상세 정보를 가져오는 중에 오류가 발생했습니다.",
-        message: error.message,
+        msg: "게시물 상세 정보를 가져오는 중에 오류가 발생했습니다.",
+        err: e,
       };
     });
 };
@@ -101,39 +86,31 @@ exports.getBoardDetail = async (ctx) => {
 exports.getCommentList = async (ctx) => {
   const _id = new ObjectId(ctx.query.id);
 
-  try {
-    const boardData = await board.findOne({ _id: _id });
-
-    if (boardData) {
-      const commentData = await boardData.comments;
+  await board
+    .findOne({ _id: _id })
+    .then((r) => {
       ctx.body = {
         status: 200,
         resultCode: 1,
-        data: commentData,
+        data: r.comments,
       };
-    } else {
+    })
+    .catch((e) => {
       ctx.body = {
         status: 200,
         resultCode: 0,
-        error: "게시물을 찾을 수 없습니다.",
+        msg: "게시물을 찾을 수 없습니다.",
+        err: e,
       };
-    }
-  } catch (error) {
-    ctx.body = {
-      status: 200,
-      resultCode: 0,
-      error: "게시물 상세 정보를 가져오는 중에 오류가 발생했습니다.",
-      message: error.message,
-    };
-  }
+    });
 };
 
 exports.updateBoard = async (ctx) => {
   const { boardTitle, boardContents, postId } = ctx.request.body;
   const _id = await new ObjectId(postId.slice(4));
 
-  try {
-    const updatedBoard = await board.findOneAndUpdate(
+  await board
+    .findOneAndUpdate(
       { _id: _id },
       {
         $set: {
@@ -142,16 +119,16 @@ exports.updateBoard = async (ctx) => {
         },
       },
       { returnOriginal: false }
-    );
-
-    if (updatedBoard) {
-      ctx.body = { status: 200, resultCode: 1 };
-    } else {
-      ctx.body = { status: 200, resultCode: 0, error: "게시물을 찾을 수 없습니다." };
-    }
-  } catch (error) {
-    ctx.body = { status: 200, resultCode: 0, error: error.message };
-  }
+    )
+    .then((ctx.body = { status: 200, resultCode: 1 }))
+    .catch((e) => {
+      ctx.body = {
+        status: 200,
+        resultCode: 0,
+        msg: "게시물을 찾을 수 없습니다.",
+        err: e,
+      };
+    });
 };
 
 exports.writeComment = async (ctx) => {
@@ -172,39 +149,31 @@ exports.writeComment = async (ctx) => {
 
   await board
     .updateOne({ _id: _id }, { $set: boardData })
-    .then((e) => {
-      ctx.body = { status: 200, resultCode: 1 };
-    })
+    .then((ctx.body = { status: 200, resultCode: 1 }))
     .catch((e) => {
       ctx.body = {
         status: 200,
         resultCode: 0,
         msg: "댓글을 찾을 수 없습니다.",
+        err: e,
       };
     });
 };
 
 exports.deleteComment = async (ctx) => {
-  console.log(ctx.request.body);
   const { userIdx, postId } = ctx.request.body;
   const _id = await new ObjectId(postId.slice(4));
-  const userInfo = await user.findOne({ userEmail: userIdx });
-  
-  if (userInfo) {
-    const result = await board.findOneAndUpdate(
-      { _id: _id, "comments.userEmail": userIdx },
+
+  await board
+    .findOneAndUpdate(
+      { _id: _id, comments: { userEmail: userIdx } },
       { $pull: { comments: { userEmail: userIdx } } },
       { new: true }
-    );
-
-    if (result) {
-      ctx.body = { status: 200, resultCode: 1, message: "댓글 삭제 완료" };
-    } else {
-      ctx.body = { status: 200, resultCode: 0, error: "삭제 권한이 없습니다." };
-    }
-  } else {
-    ctx.body = { status: 200, resultCode: 0, error: "사용자 정보를 찾을 수 없습니다." };
-  }
+    )
+    .then((ctx.body = { status: 200, resultCode: 1, msg: "댓글 삭제 완료" }))
+    .catch((e) => {
+      ctx.body = { status: 200, resultCode: 0, err: e };
+    });
 };
 
 exports.search = async (ctx) => {
@@ -223,7 +192,7 @@ exports.search = async (ctx) => {
       ctx.body = {
         status: 200,
         resultCode: 0,
-        error: e,
+        err: e,
       };
     });
 };
