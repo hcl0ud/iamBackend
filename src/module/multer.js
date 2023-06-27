@@ -2,7 +2,7 @@ const multer = require("@koa/multer");
 const fs = require("fs");
 const path = require("path");
 
-const upload = multer({
+exports.profileImg = multer({
   storage: multer.diskStorage({
     destination: async (req, file, cb) => {
       await fs.readdir(
@@ -25,4 +25,21 @@ const upload = multer({
   }),
 });
 
-module.exports = { upload };
+exports.boardImg = multer({
+  storage: multer.diskStorage({
+    destination: async (req, file, cb) => {
+      await fs.readdir(path.resolve("uploads/board/", req.body._id), (e) => {
+        if (e) {
+          fs.promises.mkdir(path.resolve("uploads/board/", req.body._id), {
+            recursive: true,
+          });
+        }
+        cb(null, "uploads/board/", req.body._id);
+      });
+    },
+    filename: (req, file, cb) => {
+      const ext = path.extname(file.originalname);
+      cb(null, Date.now() + ext);
+    },
+  }),
+});

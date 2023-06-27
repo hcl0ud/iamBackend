@@ -159,6 +159,28 @@ exports.updateBoard = async (ctx) => {
     });
 };
 
+exports.uploadBoardFile = async (ctx) => {
+  const { userIdx } = ctx.request.body;
+
+  if (ctx.request.file) {
+    await board.insertOne(
+      { userEmail: userIdx },
+      { $set: { boardImg: ctx.request.file.path } }
+    );
+    ctx.body = {
+      status: 200,
+      resultCode: 1,
+      message: "사진이 업로드되었습니다.",
+    };
+  } else {
+    ctx.body = {
+      status: 200,
+      resultCode: 0,
+      error: "사진 업로드에 실패했습니다.",
+    };
+  }
+};
+
 exports.writeComment = async (ctx) => {
   let now = dayjs();
   let time = now.format().slice(0, 19).split("T").join(" ");
