@@ -7,8 +7,9 @@ const crewBoard = db.collection("crewBoard");
 
 // 크루생성
 exports.createCrew = async (ctx) => {
-  const { crewName, profileImg, crewIntro, ownerName, crewMember } = ctx.request.body;
-  const userInfo = await user.findOne({ userName: ownerName })
+  const { crewName, profileImg, crewIntro, ownerName, crewMember } =
+    ctx.request.body;
+  const userInfo = await user.findOne({ userName: ownerName });
 
   // 중복 크루 체크
   await crew
@@ -20,7 +21,7 @@ exports.createCrew = async (ctx) => {
           profileImg: profileImg,
           crewIntro: crewIntro,
           ownerName: ownerName,
-          crewMember: crewMember
+          crewMember: crewMember,
         })
         .then((ctx.body = { status: 200, resultCode: 1 }))
         .catch((e) => {
@@ -175,23 +176,21 @@ exports.deleteCrewBoard = async (ctx) => {
 exports.getCrewBoardDetail = async (ctx) => {
   const crewName = new ObjectId(ctx.query.crewName);
 
-  await crewBoard
-    .find({ crewName: crewName })
-    .then((crewBoardData) => {
-      ctx.body = {
-        status: 200,
-        resultCode: 1,
-        data: crewBoardData,
-      };
-    })
-    .catch((error) => {
-      ctx.body = {
-        status: 200,
-        resultCode: 0,
-        error: "게시물 상세 정보를 가져오는 중에 오류가 발생했습니다.",
-        message: error.message,
-      };
-    });
+  const d = await crewBoard.find({ crewName: crewName });
+
+  if (d) {
+    ctx.body = {
+      status: 200,
+      resultCode: 1,
+      data: d,
+    };
+  } else {
+    ctx.body = {
+      status: 200,
+      resultCode: 0,
+      error: "게시물 상세 정보를 가져오는 중에 오류가 발생했습니다.",
+    };
+  }
 };
 
 // 특정 크루 게시물 불러오기
