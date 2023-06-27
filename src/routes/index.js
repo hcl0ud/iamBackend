@@ -22,6 +22,7 @@ router
 router 
   .get("board/getBoardDetail", board.getBoardDetail)
   .get("board/getCommentList", board.getCommentList)
+  .post("board/uploadBoardfile", upload.single("file"), board.uploadBoardfile)
   .post("board/updateBoard", board.updateBoard)
   .post("board/goToUpdateEdit", board.goToUpdateEdit)
   .post("board/deleteComment", board.deleteComment)
