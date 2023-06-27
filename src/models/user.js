@@ -63,6 +63,7 @@ exports.getUserInfo = async (ctx) => {
       };
     })
     .catch((e) => {
+      console.log(e);
       ctx.body = {
         status: 200,
         resultCode: 0,
@@ -119,20 +120,22 @@ exports.uploadProfilePicture = async (ctx) => {
 exports.getBoardList = async (ctx) => {
   const { userIdx } = ctx.request.body;
 
-  const d = await board.find({ userEmail: userIdx }, {}).toArray();
-
-  if (d) {
-    ctx.body = {
-      status: 200,
-      resultCode: 1,
-      data: d.reverse(),
-    };
-  } else {
-    ctx.body = {
-      status: 200,
-      resultCode: 0,
-      msg: "데이터 조회 실패",
-      err: e,
-    };
-  }
+  await board
+    .find({ userEmail: userIdx }, {})
+    .toArray()
+    .then((r) => {
+      ctx.body = {
+        status: 200,
+        resultCode: 1,
+        data: r.reverse(),
+      };
+    })
+    .catch((e) => {
+      console.log(e);
+      ctx.body = {
+        status: 200,
+        resultCode: 0,
+        msg: "데이터 조회 실패",
+      };
+    });
 };
