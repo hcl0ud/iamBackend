@@ -7,7 +7,7 @@ const board = require("../models/board");
 const crew = require("../models/crew");
 
 // File Sever
-const { upload } = require("../module/multer");
+const { profileImg, boardImg } = require("../module/multer");
 
 // USER
 router
@@ -16,13 +16,17 @@ router
   .post("user/getUserInfo", user.getUserInfo)
   .post("user/getBoardList", user.getBoardList)
   .post("user/updateProfile", user.updateProfile)
-  .post("user/uploadProfile", upload.single("file"), user.uploadProfilePicture);
+  .post(
+    "user/uploadProfile",
+    profileImg.single("file"),
+    user.uploadProfilePicture
+  );
 
 // BOARD
-router 
+router
   .get("board/getBoardDetail", board.getBoardDetail)
   .get("board/getCommentList", board.getCommentList)
-  .post("board/uploadBoardfile", upload.single("file"), board.uploadBoardfile)
+  .post("board/uploadBoardFile", boardImg.array("file"), board.uploadBoardFile)
   .post("board/updateBoard", board.updateBoard)
   .post("board/goToUpdateEdit", board.goToUpdateEdit)
   .post("board/deleteComment", board.deleteComment)

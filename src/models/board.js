@@ -159,7 +159,7 @@ exports.updateBoard = async (ctx) => {
     });
 };
 
-exports.uploadBoardfile = async (ctx) => {
+exports.uploadBoardFile = async (ctx) => {
   const { userIdx } = ctx.request.body;
 
   if (ctx.request.file) {
