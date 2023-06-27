@@ -8,7 +8,7 @@ const crewBoard = db.collection("crewBoard");
 // 크루생성
 exports.createCrew = async (ctx) => {
   const { crewName, profileImg, crewIntro, ownerName, crewMember } = ctx.request.body;
-  const userInfo = await user.findOne({ userName: ownerName });
+  const userInfo = await user.findOne({ userName: ownerName })
 
   // 중복 크루 체크
   await crew
@@ -176,7 +176,7 @@ exports.getCrewBoardDetail = async (ctx) => {
   const crewName = new ObjectId(ctx.query.crewName);
 
   await crewBoard
-    .findOne({ crewName: crewName })
+    .find({ crewName: crewName })
     .then((crewBoardData) => {
       ctx.body = {
         status: 200,
