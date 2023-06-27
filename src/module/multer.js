@@ -14,7 +14,7 @@ exports.profileImg = multer({
               { recursive: true }
             );
           }
-          cb(null, "uploads/profile/", req.body.userIdx);
+          cb(null, path.resolve("uploads/profile/", req.body.userIdx));
         }
       );
     },
