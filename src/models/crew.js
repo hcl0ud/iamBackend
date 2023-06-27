@@ -7,8 +7,8 @@ const crewBoard = db.collection("crewBoard");
 
 // 크루생성
 exports.createCrew = async (ctx) => {
-  const { crewName, profileImg, crewIntro, userIdx } = ctx.request.body;
-  const userInfo = await user.findOne({ userEmail: userIdx });
+  const { crewName, profileImg, crewIntro, ownerName, crewMember } = ctx.request.body;
+  const userInfo = await user.findOne({ userName: ownerName });
 
   // 중복 크루 체크
   await crew
@@ -19,16 +19,8 @@ exports.createCrew = async (ctx) => {
           crewName: crewName,
           profileImg: profileImg,
           crewIntro: crewIntro,
-          ownerName: {
-            userEmail: userInfo.userEmail,
-            userName: userInfo.userName,
-          },
-          crewMember: [
-            {
-              userEmail: userInfo.userEmail,
-              userName: userInfo.userName,
-            },
-          ],
+          ownerName: ownerName,
+          crewMember: crewMember
         })
         .then((ctx.body = { status: 200, resultCode: 1 }))
         .catch((e) => {
