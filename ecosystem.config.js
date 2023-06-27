@@ -2,9 +2,9 @@ module.exports = {
   apps: [
     {
       name: "iamServer",
-      script: "src/index.js",
+      script: "nodemon src/index.js",
       instances: 0,
-      exec_mode: "cluster",
+      exec_mode: "folk",
       watch: ".",
     },
   ],
