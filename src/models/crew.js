@@ -113,20 +113,24 @@ exports.getCrewList = async (ctx) => {
 // 크루 글쓰기
 
 exports.getCrewBoardList = async (ctx) => {
-  const data = await crewBoard.find({}, {}).toArray();
   const _id = new ObjectId(ctx.query.id);
+
   try {
+    const data = await crewBoard.find({}, {}).toArray();
+
+    const result = await crewBoard.findOne({ _id: _id });
+
     ctx.body = {
       status: 200,
       resultCode: 1,
       data: data.reverse(),
     };
-  } catch (e) {
+  } catch (error) {
     ctx.body = {
       status: 200,
       resultCode: 0,
-      error: "데이터 조회 실패",
-      msg: e,
+      error: "게시물을 찾을 수 없습니다.",
+      msg: error.message,
     };
   }
 };
