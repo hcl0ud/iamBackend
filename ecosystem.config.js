@@ -3,8 +3,8 @@ module.exports = {
     {
       name: "iamServer",
       script: "nodemon src/index.js",
-      instances: 0,
-      exec_mode: "folk",
+      instances: 1,
+      exec_mode: "fork",
       watch: ".",
     },
   ],
