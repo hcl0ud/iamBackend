@@ -28,7 +28,7 @@ exports.login = async (ctx) => {
   await user
     .findOne({ userEmail: userEmail, userPassword: userPassword })
     .then(async (r) => {
-      const token = jwt.sign(r.userEmail);
+      const token = await jwt.sign(r.userEmail);
       ctx.body = {
         status: 200,
         resultCode: 1,
