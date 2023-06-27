@@ -9,20 +9,17 @@ const board = db.collection("board");
 exports.register = async (ctx) => {
   const { userEmail, userName, userPassword } = ctx.request.body;
 
-  await user
-    .findOne({ userEmail: userEmail })
-    .then((r) => {
-      user.insertOne({
-        userEmail: userEmail,
-        userName: userName,
-        userPassword: userPassword,
-        userIntro: "",
-      });
-      ctx.body = { status: 200, resultCode: 1 };
-    })
-    .catch((e) => {
-      ctx.body = { status: 200, resultCode: 0, err: e };
+  if (await user.findOne({ userEmail: userEmail }))
+    ctx.body = { status: 200, resultCode: 0 };
+  else {
+    await user.insertOne({
+      userEmail: userEmail,
+      userName: userName,
+      userPassword: userPassword,
+      userIntro: "",
     });
+    ctx.body = { status: 200, resultCode: 1 };
+  }
 };
 
 exports.login = async (ctx) => {
@@ -30,13 +27,14 @@ exports.login = async (ctx) => {
 
   await user
     .findOne({ userEmail: userEmail, userPassword: userPassword })
-    .then((r) => {
+    .then(async (r) => {
+      const token = jwt.sign(r.userEmail);
       ctx.body = {
         status: 200,
         resultCode: 1,
         data: {
           userIdx: r.userEmail,
-          token: jwt.sign(r.userEmail).token,
+          token: token.token,
         },
       };
     })
