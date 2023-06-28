@@ -187,7 +187,7 @@ exports.getCrewBoardDetail = async (ctx) => {
 // 크루 게시물 불러오기
 
 exports.getCrewBoards = async (ctx) => {
-  const crewName = ctx.query.crewName;s
+  const crewName = ctx.query.crewName;
 
   const data = await crewBoard.find({ crewName: crewName });
 
