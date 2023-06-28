@@ -157,7 +157,7 @@ exports.deleteCrewBoard = async (ctx) => {
 exports.getCrewBoardDetail = async (ctx) => {
   const crewName = new ObjectId(ctx.query.body);
 
-  crew.findOne({ crewName: crewName })
+  crew.find({ crewName: crewName })
     .then((crewData) => {
       if (crewData) {
         ctx.body = {
