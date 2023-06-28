@@ -40,7 +40,6 @@ router
 router
   .get("crew/getCrewBoardDetail", crew.getCrewBoardDetail)
   .get("crew/deleteCrewBoard", crew.deleteCrewBoard)
-  .get("crew/getCrewBoardList", crew.getCrewBoardList)
   .get("crew/getCrewBoards", crew.getCrewBoards)
   .post("crew/writeCrewBoard", crew.writeCrewBoard)
   .post("crew/createCrew", crew.createCrew)
