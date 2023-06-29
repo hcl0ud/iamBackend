@@ -14,7 +14,7 @@ exports.profileImg = multer({
               { recursive: true }
             );
           }
-          cb(null, "uploads/profile/", req.body.userIdx);
+          cb(null, path.join("uploads", "profile", req.body.userIdx));
         }
       );
     },
@@ -34,7 +34,7 @@ exports.boardImg = multer({
             recursive: true,
           });
         }
-        cb(null, "uploads/board/", req.body._id);
+        cb(null, path.join("uploads", "board", req.body._id));
       });
     },
     filename: (req, file, cb) => {
@@ -56,7 +56,7 @@ exports.crewImg = multer({
               { recursive: true }
             );
           }
-          cb(null, "uploads/crewImg/", req.body.crewName);
+          cb(null, path.join("uploads", "crewImg", req.body.crewName));
         }
       );
     },
