@@ -7,7 +7,7 @@ const board = require("../models/board");
 const crew = require("../models/crew");
 
 // File Sever
-const { profileImg, boardImg } = require("../module/multer");
+const { profileImg, boardImg, crewImg } = require("../module/multer");
 
 // USER
 router
@@ -42,7 +42,7 @@ router
   .get("crew/deleteCrewBoard", crew.deleteCrewBoard)
   .get("crew/getCrewBoardList", crew.getCrewBoardList)
   .post("crew/writeCrewBoard", crew.writeCrewBoard)
-  .post("crew/createCrew", crew.createCrew)
+  .post("crew/createCrew", crewImg.single("file"), crew.createCrew)
   .post("crew/joinCrew", crew.joinCrew)
   .post("crew/getCrewList", crew.getCrewList);
 

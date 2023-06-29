@@ -22,46 +22,45 @@ const upload = multer({
 
 // 크루 생성
 exports.createCrew = async (ctx) => {
-  const { crewName, crewIntro, ownerName, crewMember } = ctx.request.body;
+  const { crewName, crewIntro, ownerName } = ctx.request.body;
   const userInfo = await user.findOne({ userName: ownerName });
 
-  // Multer 미들웨어를 이용하여 프로필 이미지 업로드
-  upload.single("crewprofileImg")(ctx, async (err) => {
-    if (err) {
-      ctx.body = { status: 500, resultCode: 0, error: err };
-      return;
-    }
+  const crewImg = ctx.request.file ? ctx.request.file.path : ""; // 업로드된 크루 프로필 이미지의 파일명 가져오기
 
-    const profileImg = ctx.file ? ctx.file.filename : ""; // 업로드된 크루 프로필 이미지의 파일명 가져오기
-
-    // 중복 크루 체크
-    await crew
-      .findOne({ crewName: crewName })
-      .then(
-        await crew
-          .insertOne({
-            crewName: crewName,
-            profileImg: profileImg,
-            crewIntro: crewIntro,
-            ownerName: ownerName,
-            crewMember: crewMember,
-          })
-          .then((ctx.body = { status: 200, resultCode: 1 }))
-          .catch((e) => {
-            ctx.body = { status: 200, resultCode: 0, msg: e };
-          })
-      )
-      .catch((e) => {
-        ctx.body = {
-          status: 200,
-          resultCode: 0,
-          error: e,
-          msg: "중복된 크루명입니다",
-        };
-      });
-  });
+  // 중복 크루 체크
+  await crew
+    .findOne({ crewName: crewName })
+    .then(
+      await crew
+        .insertOne({
+          crewName: crewName,
+          crewImg: crewImg,
+          crewIntro: crewIntro,
+          ownerInfo: {
+            userEmail: userInfo.userEmail,
+            userName: userInfo.userName,
+          },
+          crewMember: [
+            {
+              userEmail: userInfo.userEmail,
+              userName: userInfo.userName,
+            },
+          ],
+        })
+        .then((ctx.body = { status: 200, resultCode: 1 }))
+        .catch((e) => {
+          ctx.body = { status: 200, resultCode: 0, msg: e };
+        })
+    )
+    .catch((e) => {
+      ctx.body = {
+        status: 200,
+        resultCode: 0,
+        error: e,
+        msg: "중복된 크루명입니다",
+      };
+    });
 };
-
 
 // 크루 가입
 exports.joinCrew = async (ctx) => {
@@ -182,7 +181,8 @@ exports.deleteCrewBoard = async (ctx) => {
 exports.getCrewBoardDetail = async (ctx) => {
   const crewName = new ObjectId(ctx.query.body);
 
-  crew.find({ crewName: crewName })
+  crew
+    .find({ crewName: crewName })
     .then((crewData) => {
       if (crewData) {
         ctx.body = {
@@ -207,7 +207,6 @@ exports.getCrewBoardDetail = async (ctx) => {
       };
     });
 };
-
 
 // 크루원 게시물 불러오기
 

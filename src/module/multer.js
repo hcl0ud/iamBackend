@@ -44,19 +44,19 @@ exports.boardImg = multer({
   }),
 });
 
-exports.crewprofileImg = multer({
+exports.crewImg = multer({
   storage: multer.diskStorage({
     destination: async (req, file, cb) => {
       await fs.readdir(
-        path.resolve("uploads/crewprofile/", req.body.userIdx),
+        path.resolve("uploads/crewImg/", req.body.crewName),
         (e) => {
           if (e) {
             fs.promises.mkdir(
-              path.resolve("uploads/crewprofile/", req.body.userIdx),
+              path.resolve("uploads/crewImg/", req.body.crewName),
               { recursive: true }
             );
           }
-          cb(null, "uploads/crewprofile/", req.body.userIdx);
+          cb(null, "uploads/crewImg/", req.body.crewName);
         }
       );
     },
