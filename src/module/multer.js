@@ -43,3 +43,26 @@ exports.boardImg = multer({
     },
   }),
 });
+
+exports.crewprofileImg = multer({
+  storage: multer.diskStorage({
+    destination: async (req, file, cb) => {
+      await fs.readdir(
+        path.resolve("uploads/crewprofile/", req.body.userIdx),
+        (e) => {
+          if (e) {
+            fs.promises.mkdir(
+              path.resolve("uploads/crewprofile/", req.body.userIdx),
+              { recursive: true }
+            );
+          }
+          cb(null, "uploads/crewprofile/", req.body.userIdx);
+        }
+      );
+    },
+    filename: (req, file, cb) => {
+      const ext = path.extname(file.originalname);
+      cb(null, Date.now() + ext);
+    },
+  }),
+});
