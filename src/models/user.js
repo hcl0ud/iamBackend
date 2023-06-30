@@ -31,12 +31,13 @@ exports.login = async (ctx) => {
   await user
     .findOne({ userEmail: userEmail, userPassword: userPassword })
     .then(async (r) => {
+      const token = await jwt.sign(r.userEmail);
       ctx.body = {
         status: 200,
         resultCode: 1,
         data: {
           userIdx: r.userEmail,
-          token: await jwt.sign(r.userEmail).token,
+          token: token.token,
         },
       };
     })
