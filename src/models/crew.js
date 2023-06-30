@@ -4,8 +4,6 @@ const dayjs = require("dayjs");
 const user = db.collection("user");
 const crew = db.collection("crew");
 const crewBoard = db.collection("crewBoard");
-const multer = require("multer");
-const path = require("path");
 
 // 크루 생성
 exports.createCrew = async (ctx) => {
