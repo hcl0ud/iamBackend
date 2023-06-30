@@ -4,21 +4,6 @@ const dayjs = require("dayjs");
 const user = db.collection("user");
 const crew = db.collection("crew");
 const crewBoard = db.collection("crewBoard");
-const multer = require("multer");
-const path = require("path");
-
-// Multer 미들웨어 설정
-const upload = multer({
-  storage: multer.diskStorage({
-    destination: (req, file, cb) => {
-      cb(null, "uploads/crewprofile"); // 프로필 이미지를 저장할 경로 설정
-    },
-    filename: (req, file, cb) => {
-      const ext = path.extname(file.originalname);
-      cb(null, Date.now() + ext); // 파일 이름 설정 (현재 시간 + 확장자)
-    },
-  }),
-});
 
 // 크루 생성
 exports.createCrew = async (ctx) => {
